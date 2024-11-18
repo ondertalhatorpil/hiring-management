@@ -1,0 +1,227 @@
+.header {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: top;
+    padding: 0px 0px 0px 30px;
+    background-color: #fff;
+    font-family: "Outfit", sans-serif;
+}
+
+.logo {
+    margin-top: 20px;
+    font-size: 24px;
+    font-weight: bold;
+    width: 120px !important;
+}
+.Headerlogo{
+    width: 235px;
+    padding-top: 10px;
+
+}
+
+
+.menu-right{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #D12A2C;
+    padding: 30px 70px 30px 30px;
+    margin-right: -8px;
+}
+.social-media-icons-div{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.social-media-icons{
+    font-size: 20px;
+    margin-left: 20px;
+    color: #fff;
+}
+.menu-icon {
+    font-size: 30px;
+    cursor: pointer;
+    z-index: 1000; /* X tuşunu her şeyin önüne getirir */
+    position: relative; /* Normal durumda sağ üst köşede olacak */
+    transition: color 0.3s ease; /* Renk geçişi için animasyon */
+    padding-left: 55px;
+    color: #fff;
+}
+
+.fullscreen-menu {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: #D12A2C;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease; /* Geçişler için animasyon */
+    transform: translateY(-100%); /* Menüyü yukarıda başlat */
+    z-index: 999;
+}
+
+.fullscreen-menu.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0); /* Menü açıldığında yukarıdan aşağıya kayar */
+}
+
+.toggle-menu-nav{
+    width: 80%;
+}
+
+.fullscreen-menu nav ul {
+    list-style: none;
+    text-align: center;
+}
+
+.fullscreen-menu nav ul li {
+    margin: 20px 0;
+}
+
+.fullscreen-menu nav ul li a {
+    color: white;
+    font-size: 44px;
+    text-decoration: none;
+    opacity: 0; /* Başlangıçta görünmez olacak */
+    transform: translateY(20px); /* Başlangıçta yukarıdan kayacak */
+    transition: opacity 0.5s ease, transform 0.5s ease; /* Geçişler için animasyon */
+}
+
+.fullscreen-menu.active nav ul li a {
+    opacity: 1; /* Menü açıldığında görünür olacak */
+    transform: translateY(0); /* Menünün içindeki bağlantılar açıldığında kayar */
+}
+
+.fullscreen-menu nav ul li a:hover {
+    border-bottom: 4px solid #fff;
+}
+
+/* Menü açıkken X işareti sağ üst köşede görünür olacak */
+.menu-icon.open {
+    position: fixed;
+    top: 40px;
+    right: 150px;
+    color: white; /* X işaretini beyaz yapar ki kırmızı zemin üzerinde görünür olsun */
+    z-index: 1000; /* Menü aktifken de X işareti en önde kalır */
+    font-size: 40px; /* X işaretini biraz daha büyütür */
+    transition: color 0.3s ease; /* Renk geçişi için animasyon */
+}
+.social-media-icons-toggle-menu{
+    display: flex;
+    flex-direction: column;
+}
+.social-media-icons-toggle-menu > .social-media-icons {
+    margin-bottom: 35px;
+    color: #fff;
+}
+
+
+.toggle-dekor {
+    position: absolute;
+    filter: brightness(0) invert(1); /* Görseli tamamen beyaz yapar */
+    width:350px;
+    height: 500px;
+    right: 0px;
+}
+
+
+/* Mobile responsiveness */
+@media (max-width: 768px) {
+
+ 
+    .header {
+      padding: 0.5rem;
+    }
+  
+    .Headerlogo {
+      height: 80px;
+    }
+  
+    .social-media-icons-div {
+      display: none;
+    }
+  
+    .menu-icon {
+      margin-left: 10px;
+    }
+  
+    .fullscreen-menu.active {
+      padding: 20px;
+    }
+  
+    .toggle-menu-nav ul li a {
+      font-size: 20px;
+    }
+  
+    .social-media-icons-toggle-menu {
+      gap: 15px;
+    }
+  
+    .social-media-icons-toggle-menu .social-media-icons {
+      font-size: 20px;
+    }
+  
+    .toggle-dekor {
+      width: 150px;
+    }
+  }
+  
+  @media (max-width: 480px) {
+    .header{
+        width: 100%;
+        margin-bottom: 30px;
+        background-color: #ffffff;
+    }
+    .Headerlogo {
+      height: 50px;
+      width: 90%;
+      margin-left: 10px;
+      margin-top: 10px;
+    }
+    .menu-right{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        background-color: #D12A2C;
+        padding: 8px 8px 10px 1px;
+        border-radius: 10px 0 0 10px;
+    }
+  
+    .menu-icon {
+        margin-right: 23px;
+        font-size: 23px;
+    }
+
+    .toggle-menu-nav ul li a {
+        font-size: 28px !important;
+    }
+
+    .fullscreen-menu.active {
+        opacity: 1;
+        visibility: visible;
+        width: 100%;
+        flex-direction: column;
+        transform: translateY(0);
+        align-items: center;
+        justify-content: baseline;
+        height: 100vh;
+    }
+    .toggle-dekor{
+        display: none;
+    }
+    .social-media-icons-toggle-menu{
+        position: absolute;
+        display: none;
+    }
+    .toggle-menu-nav li a{
+        font-size: 20px;
+    }
+    
+
+  }

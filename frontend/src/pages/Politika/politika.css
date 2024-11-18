@@ -1,0 +1,59 @@
+.politikaContainer{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+@import url('https://fonts.googleapis.com/css2?family=Lobster&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+.aboutText{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 70px;
+}
+.aboutText p{
+    margin-top: 50px;
+    margin-bottom: 30px;
+    width: 50%;
+    font-size: 28px;
+    text-align: center;
+    font-family: "Lobster", sans-serif;
+}
+.aboutText h4{
+    font-weight: 800;
+    text-transform: uppercase;
+}
+.aboutText ul{
+    width: 50%;
+}
+.aboutText ul li {
+    text-align: left;
+    font-size: 14px;
+    margin-bottom: 20px;
+
+}
+
+@media screen and (max-width: 600px) {
+   .aboutDescBanner h1{
+    text-align: center;
+   }
+   .aboutDescBanner p{
+    width: 90%;
+   }
+   .aboutText p{
+        width: 80%;
+        font-size: 22px;
+   }
+   .aboutText h4{
+    width: 80%;
+    font-size: 13px;
+   }
+}
+
+
+@media screen and (max-width: 992px) {
+  
+}

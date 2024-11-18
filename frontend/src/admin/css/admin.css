@@ -1,0 +1,37 @@
+.admin-panel {
+    display: flex;
+    font-family: "Outfit", sans-serif;
+  }
+  
+  .sidebar {
+    width: 200px;
+    background-color: #f0f0f0;
+    padding: 10px 10px 90vh 10px;
+  }
+  .sidebar img{
+    width: 100%;
+    margin-bottom: 20%;
+  }
+  .content {
+    flex-grow: 1;
+    padding: 20px;
+    background-color: #fff;
+    border-left: 1px solid #ccc;
+  }
+  
+  h3 {
+    margin: 10px 0;
+    font-weight: 600;
+  }
+  
+  ul {
+    list-style: none;
+    padding: 0;
+  }
+  
+  li {
+    margin: 15px 0;
+    cursor: pointer;
+    flex-direction: column;
+  }
+  

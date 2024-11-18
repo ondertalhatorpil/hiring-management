@@ -1,0 +1,19 @@
+.kvkk-container{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding-top: 30px;
+    padding-bottom: 30px;
+}
+.kvkk-box{
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-direction: column;
+    width: 30%;
+    margin-bottom: 20px;
+}
+.kvkk-box ul li{
+    list-style-type: circle;
+}

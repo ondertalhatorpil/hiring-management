@@ -1,0 +1,108 @@
+.archive-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 20px;
+}
+
+.page-title {
+    font-size: 24px;
+    font-weight: bold;
+    margin-bottom: 20px;
+}
+
+.tab-container {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.tab-button {
+    padding: 10px 20px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.tab-button.active {
+    background-color: #D12A2C;
+    color: white;
+}
+
+.tab-button:not(.active) {
+    background-color: #e5e7eb;
+}
+
+.tab-button:hover:not(.active) {
+    background-color: #d1d5db;
+}
+
+.jobs-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.job-card {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 16px;
+    border: 1px solid #e5e7eb;
+    border-radius: 8px;
+    background-color: white;
+}
+
+.job-info h3 {
+    font-size: 18px;
+    font-weight: 600;
+    margin: 0 0 4px 0;
+}
+
+.job-location {
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.archive-button {
+    width: 20%;
+    padding: 8px 16px;
+    background-color: #eab308;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.archive-button:hover {
+    background-color: #ca8a04;
+}
+
+.loading {
+    text-align: center;
+    padding: 20px;
+    color: #6b7280;
+}
+
+/* Responsive tasarım için medya sorguları */
+@media (max-width: 768px) {
+    .job-card {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 12px;
+    }
+
+    .archive-button {
+        width: 100%;
+    }
+
+    .tab-container {
+        flex-direction: column;
+    }
+
+    .tab-button {
+        width: 100%;
+    }
+}

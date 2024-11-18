@@ -1,0 +1,136 @@
+.sss-container {
+    max-width: 100%;
+    padding: 0 20px;
+    font-family: Arial, sans-serif;
+    margin-bottom: 140px;
+}
+
+.sss-title {
+    text-align: center;
+    color: #333;
+    font-size: 32px;
+    margin-bottom: 40px;
+    position: relative;
+    padding-bottom: 15px;
+}
+
+.sss-title:after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60px;
+    height: 3px;
+    background-color: #D12A2C;
+}
+
+.sss-list {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.sss-item {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    overflow: hidden;
+    background-color: #fff;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+}
+
+.sss-button {
+    width: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: none;
+    border: none;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.3s ease;
+}
+
+.sss-button:hover {
+    background-color: #f8f9fa;
+}
+
+.sss-question {
+    font-size: 16px;
+    font-weight: 500;
+    color: #333;
+    flex: 1;
+    padding-right: 20px;
+}
+
+.sss-icon {
+    color: #D12A2C;
+    display: flex;
+    align-items: center;
+    transition: transform 0.3s ease;
+}
+
+.sss-answer-container {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    background-color: #f8f9fa;
+}
+
+.sss-answer-container.active {
+    max-height: 300px;
+}
+
+.sss-answer {
+    padding: 20px;
+    color: #666;
+    line-height: 1.6;
+    font-size: 15px;
+}
+
+/* Responsive Tasarım */
+@media (max-width: 768px) {
+    .sss-container {
+        padding: 0 15px;
+        margin: 30px auto;
+    }
+
+    .sss-title {
+        font-size: 24px;
+        margin-bottom: 30px;
+    }
+
+    .sss-question {
+        font-size: 15px;
+    }
+
+    .sss-button {
+        padding: 15px;
+    }
+
+    .sss-answer {
+        padding: 15px;
+        font-size: 14px;
+    }
+}
+
+.sss-item:hover {
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.sss-button:focus {
+    outline: none;
+    background-color: #f8f9fa;
+}
+
+/* Animasyon */
+@keyframes slideDown {
+    from { max-height: 0; }
+    to { max-height: 300px; }
+}
+
+@keyframes slideUp {
+    from { max-height: 300px; }
+    to { max-height: 0; }
+}

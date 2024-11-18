@@ -1,0 +1,125 @@
+.G-M-Container {
+    width: 100%;
+    max-width: 1200px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 70px;
+    background-color: #D12A2C;
+    font-family: "Outfit", sans-serif;
+    padding: 40px 20px;
+    box-sizing: border-box;
+    position: relative;
+    border-radius: 4px;
+}
+
+.G-M-Desc {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-direction: column;
+    margin-left: 60px;
+    width: 35%;
+    color: aliceblue;
+}
+
+.G-M-Desc h1 {
+    font-size: 42px;
+    margin-bottom: 13px;
+}
+
+.G-M-Desc p {
+    margin-bottom: 25px;
+    width: 150%;
+}
+
+.GM-Desc-B {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 12px 34px;
+    background-color: aliceblue;
+    color: #D12A2C;
+    text-decoration: none;
+}
+
+.G-M-Container > img {
+    position: absolute;
+    right: 0;
+    width: 400px;
+    height: 270px;
+}
+
+@media (max-width: 1200px) {
+    .G-M-Container {
+        max-width: 100%;
+    }
+}
+
+@media (max-width: 992px) {
+    .G-M-Desc {
+        margin-left: 30px;
+        width: 45%;
+    }
+    
+    .G-M-Desc h1 {
+        font-size: 36px;
+    }
+    
+    .G-M-Container > img {
+        width: 400px;
+        height: 250px;
+    }
+}
+
+@media (max-width: 768px) {
+    .G-M-Container {
+        flex-direction: column;
+        text-align: center;
+    }
+    
+    .G-M-Desc {
+        margin-left: 0;
+        width: 100%;
+        align-items: center;
+        margin-bottom: 20px;
+    }
+
+    .G-M-Desc p{
+        width: 93%;
+
+    }
+    
+    .G-M-Desc h1 {
+        font-size: 32px;
+    }
+    
+    .G-M-Container > img {
+        width: 100%;
+        max-width: 400px;
+        height: auto;
+    }
+}
+
+@media (max-width: 600px) {
+    .G-M-Desc{
+        text-align: start;
+        align-items: baseline;
+    }
+    .G-M-Desc h1 {
+        font-size: 28px;
+    }
+    .GM-Desc-B {
+        margin-top: 10px;
+        padding: 10px 20px;
+    }
+    .G-M-Container{
+        padding-bottom: 270px;
+    }
+    .G-M-Container img{
+        bottom: 60px;
+        position: absolute;
+        transform: rotate(90deg);
+        width: 100%;
+    }
+}

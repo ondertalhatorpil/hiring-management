@@ -1,0 +1,45 @@
+.successForm{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 4% 0px;
+    font-family: "Outfit", sans-serif;
+    margin-bottom: 15%;
+
+}
+.successForm img{
+    width: 350px;
+    height: 300px;
+}
+
+.successForm p{
+    margin-top: 8px;
+}
+.homeLink{
+    margin-top: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.homeicon{
+    font-size: 26px;
+    color: #D12A2C;
+}
+.homeLink a{
+    color:#D12A2C;
+    text-decoration: none;
+    font-size: 18px;
+}
+
+
+@media screen and (max-width: 600px) {
+    .successForm{
+        text-align: center;
+        margin-bottom: 210px;
+    }
+    .successForm p{
+        width: 80%;
+    }
+  }

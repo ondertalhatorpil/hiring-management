@@ -1,0 +1,578 @@
+.MerkezFormRadio {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    font-family: "Outfit", sans-serif;
+    height: auto;
+    margin-bottom: 60px;
+}
+
+.ilan-detayları {
+    background-color: #D12A2C;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-left: 250px;
+    position: relative;
+
+}
+
+.ilanDetaylarıRadio {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    padding: 10px 15px 30px 15px;
+    color: aliceblue;
+
+}
+
+.ilan-detay {
+    width: 100%;
+    display: flex;
+    align-items: baseline;
+    justify-content: baseline;
+    flex-direction: column;
+}
+
+.ilan-desc-logo {
+    filter: brightness(0) invert(1);
+    width: 170px;
+    height: 290px;
+}
+
+.backİcon {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: baseline;
+}
+
+.backİcon > * {
+    color: #fff;
+    font-size: 35px;
+}
+
+.ilanDetayPosition {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: baseline;
+    flex-direction: column;
+}
+
+.ilanDetayDesc {
+    width: 60%;
+    margin-top: 15px;
+}
+
+
+.ilan-descs-banner {
+    display: flex;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.formNameSurname {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.formNameSurnameMail {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 30px;
+}
+
+.formNameSurnameMail label {
+    margin-bottom: 7px;
+}
+
+.formCinsiyetDogum {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.FCD {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.FCD label {
+    margin-bottom: 7px;
+}
+
+.FormAdress {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-direction: column;
+    margin-bottom: 20px;
+    width: 100%;
+}
+
+
+.FormAdress label {
+    margin-bottom: 7px;
+}
+
+.formNameSurname label, .formNameSurnameMail label, .formCinsiyetDogum label, .FormAdress label, .formTel label, .MMASForm label, .ASForm label {
+    font-weight: 600;
+    color: #000;
+    font-size: 18px;
+}
+
+.formTel {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.FTForm {
+    display: flex;
+    flex-direction: column;
+}
+
+.FTForm label {
+    margin-bottom: 7px;
+}
+
+.merkez-desc-bot-ilan{
+    width: 100%;
+}
+
+.merkez-desc-bot-ilan input {
+    width: 100% ;
+    max-width: 300px;
+    margin-bottom: 10px;
+}
+
+.MMASForm {
+    display: flex;
+    justify-content: left;
+    align-items: left;
+    margin-bottom: 30px;
+    flex-direction: column;
+}
+
+.MMForm {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-direction: column;
+    margin-top: 30px;
+}
+
+.MMASForm label {
+    margin-bottom: 7px;
+}
+
+.ASForm {
+    display: flex;
+    align-items: center;
+    justify-content: baseline;
+    margin-bottom: 30px;
+}
+
+.ASFormTekil {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-direction: column;
+}
+
+.ASFormTekil label {
+    margin-bottom: 7px;
+}
+
+.TTitle {
+    margin-bottom: 7px;
+}
+
+.TButton {
+    font-family: "Outfit", sans-serif;
+    margin-top: 5px;
+    padding: 10px 32px;
+    background-color: #D12A2C;
+    color: #fff;
+    margin-bottom: 30px;
+    border-radius: 2px;
+    width: 300px;
+}
+
+.kvkk-consent {
+    display: flex;
+    align-items: center;
+    justify-content: baseline;
+    width: 100%;
+    margin: 20px 0;
+}
+
+.kvkk-label {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+.kvkk-text {
+    font-size: 14px;
+    color: #666;
+    line-height: 1.4;
+}
+
+.kvkk-label input[type="checkbox"] {
+    width: 20px;
+}
+
+
+
+.SubmitButton {
+    font-family: "Outfit", sans-serif;
+    padding: 15px 50px;
+    background: #226f45 !important;
+    color: #fff;
+    font-size: 30px;
+    border-radius: 5px;
+    width: 300px;
+}
+
+.ilan-detay p {
+    margin-right: 50px;
+}
+
+.ilan-detay span {
+    font-weight: 700;
+}
+
+.ilanTitle {
+    padding-bottom: 9px;
+    margin-left: 10px;
+    font-size: 35px;
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+    align-items: baseline;
+    justify-content: center;
+    margin-top: 60px;
+    width: 80%;
+    margin-left: 150px;
+}
+
+.formUsersSetion {
+    display: flex;
+    align-items: baseline;
+    justify-content: center;
+    flex-direction: column;
+    margin: 70px;
+}
+
+.formUserOneSection {
+    display: flex;
+    margin-bottom: 30px;
+}
+
+form input, form select {
+    padding: 12px 25px;
+    border-radius: 5px;
+    border: 1px solid #2f2f2f;
+    background-color: #f9f9f9;
+    font-size: 16px;
+    color: #333;
+    transition: all 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+    margin-right: 20px;
+    max-width: 100%;
+    width: 300px;
+}
+
+form input:focus, form select:focus {
+    outline: none;
+    border-color: #ff0606;
+    box-shadow: 0 0 5px rgba(209, 42, 44, 0.5);
+}
+
+form select {
+    font-family: "Outfit", sans-serif;
+    appearance: none;
+    background-image: url('data:image/svg+xml;charset=US-ASCII,<svg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%20fill%3D%22%23333%22><path%20d%3D%22M7%2010l5%205%205-5H7z%22/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 10px center;
+    background-size: 12px;
+    padding-right: 30px;
+}
+
+form select option {
+    background-color: #fff;
+    color: #333;
+}
+
+form input:hover, form select:hover {
+    border-color: #9c1e1f;
+}
+
+form input:disabled, form select:disabled {
+    background-color: #e0e0e0;
+    color: #999;
+    border-color: #ccc;
+}
+.file-input {
+    display: flex;
+    width: 100%;
+    max-width: 300px;
+    background-color: #D12A2C;
+    border: 0;
+    color: #fff;
+}
+/* Input'u gizle */
+/* Modern tarayıcılar için */
+input[type="file"]::file-selector-button {
+    /* Butonun stilleri */
+    background-color: #D12A2C;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+  
+  /* Safari için */
+  input[type="file"]::-webkit-file-upload-button {
+    /* Butonun stilleri */
+    background-color: transparent;
+    color: white;
+    padding: 8px 16px;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+  }
+
+
+  .formUserOneSection {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+
+.formPhoto {
+    margin-bottom: 30px;
+    min-width: 200px;
+}
+
+.photo-upload-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 10px;
+}
+
+.photo-upload-preview {
+    width: 200px;
+    height: 200px;
+    border: 2px dashed #ddd;
+    border-radius: 10px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: #f8f9fa;
+}
+
+.photo-preview {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.photo-placeholder {
+    color: #666;
+    font-size: 14px;
+    text-align: center;
+    padding: 20px;
+}
+
+.photo-upload-label {
+    background-color: #D12A2C;
+    color: white;
+    padding: 8px 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+.photo-upload-label:hover {
+    background-color: #591c1d;
+}
+
+.photo-input {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .formUserOneSection {
+        flex-direction: column;
+    }
+
+    .formPhoto {
+        width: 100%;
+    }
+
+    .photo-upload-preview {
+        width: 150px;
+        height: 150px;
+    }
+}
+
+
+@media (max-width: 600px) {
+
+    .formUsersSetion{
+        width: 100%;
+        margin: 40px 0 0 0;
+    }
+    .ilan-detayları {
+        flex-direction: column;
+        padding-left: 10px;
+        position: relative;
+    }
+
+    .merkez-desc-bot-ilan{
+        
+        width: 100% ;
+    }
+    .merkez-desc-bot-ilan input{
+        width: 100%  !important ;
+    }
+    .ilan-detay {
+        flex-direction: column;
+    }
+
+    .ilanTitle {
+        font-size: 26px;
+    }
+
+    .ilan-descs-banner {
+        flex-direction: column;
+    }
+
+    .ilan-descs-banner p {
+        margin-bottom: 10px;
+    }
+
+    .ilan-desc-logo {
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        opacity: .3;
+    }
+
+    .ilanDetayDesc {
+        width: 100%;
+    }
+
+    form {
+        margin-left: -20px;     
+    }
+    .formUserOneSection {
+        flex-direction: column;
+        margin-bottom: 0;
+    }
+
+    .formNameSurname {
+        margin-bottom: 30px;
+    }
+
+    .formCinsiyetDogum {
+        flex-direction: column;
+    }
+
+    .formCinsiyetDogum select {
+        margin-bottom: 30px;
+    }
+
+    .FCD {
+        width: 100%;
+    }
+
+    .FCD select, .FCD input {
+        width: 100%;
+        padding-right: 10px;
+    }
+
+    .FormAdress {
+        width: 100% !important;
+    }
+    .formAdress input {
+        width: 100%;
+    }
+   
+
+    .formTel {
+        flex-direction: column;
+    }
+
+    .formTel > div {
+        margin-bottom: 30px;
+    }
+
+    .MMASForm, .MMForm {
+        width: 100%;
+    }
+
+    .MMForm select {
+        width: 100%;
+    }
+
+    .ASForm {
+        flex-direction: column;
+        align-items: baseline;
+    }
+
+    .ASFormTekil {
+        width: 100%;
+    }
+
+    .ASForm select {
+        width: 100%;
+        margin-bottom: 30px;
+    }
+
+    form input, form select {
+        width: 100%;
+        margin-bottom: 15px;
+        margin-right: 0;
+    }
+
+    .TButton, .SubmitButton {
+        width: 100%;
+        max-width: 300px;
+    }
+
+    .input-data {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+    }
+    .input-data input{
+        width: 100%;
+    }
+
+    .formCVUpload label{
+        font-size: 17px;
+       }
+}

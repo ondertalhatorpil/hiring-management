@@ -1,0 +1,125 @@
+/* slider.css */
+.relative {
+    position: relative;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.overflow-hidden {
+    overflow: hidden;
+}
+
+.flex {
+    display: flex;
+}
+
+.transition-transform {
+    transition-property: transform;
+}
+
+.duration-500 {
+    transition-duration: 500ms;
+}
+
+.ease-out {
+    transition-timing-function: ease-out;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.min-w-full {
+    min-width: 100%;
+}
+
+.relative {
+    position: relative;
+}
+
+.w-full {
+    width: 100%;
+}
+
+.h-full {
+    height: 100%;
+}
+
+.object-cover {
+    object-fit: cover;
+}
+
+.absolute {
+    position: absolute;
+}
+
+.right-6 {
+    right: 1.5rem;
+}
+
+.top-1\/2 {
+    top: 50%;
+}
+
+.transform {
+    transform: translateY(-50%);
+}
+
+.flex-col {
+    flex-direction: column;
+}
+
+.gap-2 {
+    gap: 0.5rem;
+}
+
+.rounded-full {
+    border-radius: 9999px;
+}
+
+.transition-all {
+    transition-property: all;
+}
+
+.duration-300 {
+    transition-duration: 300ms;
+}
+
+.bg-red-500 {
+    background-color: rgb(239, 68, 68);
+}
+
+.w-4 {
+    width: 1rem;
+}
+
+.h-4 {
+    height: 1rem;
+}
+
+.bg-white\/50 {
+    background-color: rgba(255, 255, 255, 0.5);
+}
+
+.w-3 {
+    width: 0.75rem;
+}
+
+.h-3 {
+    height: 0.75rem;
+}
+
+button {
+    border: none;
+    padding: 0;
+    cursor: pointer;
+}
+
+@media (max-width: 600px) {
+    .relative{
+        height: 180px;
+        object-fit: cover;
+    }
+}
