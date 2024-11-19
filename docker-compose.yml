@@ -37,7 +37,7 @@ services:
       backend-dev:
         condition: service_healthy
     ports:
-      - 8140:80
+      - 8141:80
     networks:
       - onder-wlan
     restart: unless-stopped
@@ -60,7 +60,7 @@ services:
     networks:
       - onder-wlan
     volumes:
-      - db:/var/lib/mysql
+      - ./db:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
 networks:
