@@ -2,7 +2,7 @@ FROM node:18-alpine as build
 
 WORKDIR /app
 COPY package*.json ./
-ENV REACT_APP_API_URL=https://test.layusoft.com
+ENV REACT_APP_API_URL=https://kariyer.onder.org.tr
 ENV NODE_ENV=production
 RUN npm install
 COPY . .
