@@ -434,8 +434,7 @@ app.post('/api/merkez-ilanlar', (req, res) => {
         ilan_tarihi: req.body.ilan_tarihi, // İlan tarihi
         is_tipi: req.body.is_tipi, // İş tipi
         sehir: req.body.sehir, // Şehir
-        detaylar: req.body.detaylar, // Detaylar
-        maas: req.body.maas, // Maaş
+        detaylar: req.body.detaylar // Detaylar
     };
 
     db.query('INSERT INTO merkez_ilanlar SET ?', ilan, (err, result) => {

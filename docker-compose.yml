@@ -38,8 +38,13 @@ services:
         condition: service_healthy
     ports:
       - 8141:80
+    volumes:  
+      - ./frontend:/app
+      - /app/node_modules
     networks:
       - onder-wlan
+    environment:
+      - WATCHPACK_POLLING=true
     restart: unless-stopped
 
   db:

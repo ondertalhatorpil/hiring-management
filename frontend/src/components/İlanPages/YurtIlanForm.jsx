@@ -6,7 +6,7 @@ const API_URL = process.env.REACT_APP_API_URL;
 const YurtIlanForm = () => {
    const [ilanData, setIlanData] = useState({
        user_id: '',
-       job_id: Math.floor(Math.random() * 1000000).toString(), // Rastgele job_id
+       job_id: Math.floor(Math.random() * 1000000).toString(), 
        ilan_basligi: '',
        firma_adi: '',
        ilan_tarihi: '',
