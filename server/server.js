@@ -365,7 +365,6 @@ app.get('/api/yurt-ilanlar/:id', (req, res) => {
             return res.status(404).json({ message: 'İlan bulunamadı.' });
         }
 
-        // Sonucu döndür
         res.json(results[0]); // Tek bir ilan döneceği için ilk elemanı döndür
     });
 });
@@ -382,7 +381,6 @@ app.post('/api/yurt-ilanlar', (req, res) => {
         is_tipi: req.body.is_tipi, // İş tipi
         sehir: req.body.sehir, // Şehir
         detaylar: req.body.detaylar, // Detaylar
-        maas: req.body.maas, // Maaş
     };
 
     db.query('INSERT INTO yurt_ilanlar SET ?', ilan, (err, result) => {

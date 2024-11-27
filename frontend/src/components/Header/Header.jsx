@@ -30,7 +30,7 @@ const Header = () => {
           <a href=" https://whatsapp.com/channel/0029Va640Ct0gcfIO3kVpO1s" target='_blank' rel="noreferrer"><FaWhatsapp className='social-media-icons' /></a>
         </div>
         <div className={`menu-icon ${isMenuOpen ? 'open' : ''}`} onClick={toggleMenu}>
-          {isMenuOpen ? <IoCloseSharp /> : '☰'} {/* Buraya ikon eklendi */}
+          {isMenuOpen ? <IoCloseSharp /> : '☰'} 
         </div>
       </div>
       <div className={`fullscreen-menu ${isMenuOpen ? 'active' : ''}`}>

@@ -13,7 +13,6 @@ const YurtIlanForm = () => {
        is_tipi: '',
        sehir: '',
        detaylar: '',
-       maas: ''
    });
 
    const handleChange = (e) => {
@@ -48,7 +47,6 @@ const YurtIlanForm = () => {
                is_tipi: '',
                sehir: '',
                detaylar: '',
-               maas: ''
            });
 
        } catch (error) {
@@ -128,17 +126,6 @@ const YurtIlanForm = () => {
                        required
                        placeholder="İş tanımı, aranan nitelikler, sorumluluklar vb."
                    ></textarea>
-               </div>
-               <div className="merkez-form-group">
-                   <label htmlFor="maas">Maaş:</label>
-                   <input 
-                       type="number" 
-                       name="maas" 
-                       value={ilanData.maas} 
-                       onChange={handleChange} 
-                       required 
-                       placeholder="Aylık brüt maaş"
-                   />
                </div>
                <button type="submit" className="merkez-form-button">İlanı Aç</button>
            </form>
