@@ -315,6 +315,7 @@ const MerkezForm = () => {
                                     </div>
                                     <div className='ilan-descs-banner'>
                                         <p className='ilanŞirketAdı'>Kurum Adı: <br /> <span>{merkezIlanlar.firma_adi}</span></p>
+                                       
                                         <p className='İlanÇalışmaTürü'>Çalışma Türü: <br /> <span>{merkezIlanlar.is_tipi}</span></p>
                                         <p className='İlanTarih'>Yayınlanma Tarihi: <br /> <span>{new Date(merkezIlanlar.ilan_tarihi).toLocaleDateString()}</span></p>
                                         <p className='İlanNo'>İlan Numarası: <br /><span>{merkezIlanlar.job_id}</span></p>

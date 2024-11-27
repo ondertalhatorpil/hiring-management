@@ -15,7 +15,7 @@ services:
       - DB_PASSWORD=1453Abdullah*
       - DB_NAME=onder
       - PORT=8082
-      - CORS_ORIGIN=http://localhost:4041
+      - CORS_ORIGIN=http://kariyer.onder.org.tr
       - UPLOAD_DIR=uploads
     volumes:
       - backend:/app

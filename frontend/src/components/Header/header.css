@@ -12,11 +12,12 @@
     margin-top: 20px;
     font-size: 24px;
     font-weight: bold;
-    width: 120px !important;
+    width: 120px;
 }
 .Headerlogo{
-    width: 180px;
+    width:220px !important ;
     padding-top: 10px;
+
 }
 
 
@@ -139,7 +140,7 @@
     }
   
     .Headerlogo {
-      height: 80px;
+      width:40% !important;
     }
   
     .social-media-icons-div {
@@ -178,8 +179,7 @@
         background-color: #ffffff;
     }
     .Headerlogo {
-      height: 50px;
-      width: 90%;
+      width: 40% !important;
       margin-left: 10px;
       margin-top: 10px;
     }

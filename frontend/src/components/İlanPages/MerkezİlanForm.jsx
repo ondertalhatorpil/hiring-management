@@ -10,13 +10,14 @@ const API_URL = process.env.REACT_APP_API_URL;
 const MerkezİlanForm = () => {
     const [ilanData, setIlanData] = useState({
         user_id: '', 
-        job_id: Math.floor(Math.random() * 1000000).toString(), 
+        job_id: Math.floor(Math.random() * 1000000).toString(), // Rastgele bir job_id oluştur
         ilan_basligi: '', 
         firma_adi: '', 
         ilan_tarihi: '', 
         is_tipi: '', 
         sehir: '', 
         detaylar: '', 
+        maas: '' 
     });
 
     const handleChange = (e) => {
@@ -51,6 +52,7 @@ const MerkezİlanForm = () => {
                 is_tipi: '',
                 sehir: '',
                 detaylar: '',
+                maas: ''
             });
 
         } catch (error) {
@@ -90,6 +92,11 @@ const MerkezİlanForm = () => {
                     <label htmlFor="detaylar">Detaylar:</label>
                     <textarea name="detaylar" value={ilanData.detaylar} onChange={handleChange} required></textarea>
                 </div>
+                <div className="merkez-form-group">
+                    <label htmlFor="maas">Maaş:</label>
+                    <input type="text" name="maas" value="Görüşmede Belirlenicek" onChange={handleChange} required />
+                </div>
+                
                 <button type="submit" className="merkez-form-button">İlanı Aç</button>
             </form>
             <style jsx>{`
