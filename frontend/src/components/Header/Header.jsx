@@ -10,6 +10,8 @@ import { FaInstagram } from "react-icons/fa";
 import { FaTwitter } from "react-icons/fa"; // Düzeltildi
 import { FaYoutube } from "react-icons/fa";
 import { FaWhatsapp } from "react-icons/fa";
+import { TbWorldShare } from "react-icons/tb";
+
 
 const Header = () => {
   const [isMenuOpen, setMenuOpen] = useState(false);
@@ -23,6 +25,7 @@ const Header = () => {
       <Link to="/"><img className='Headerlogo' src={KariyerLogo} alt="Önder Logo" /></Link>
       <div className='menu-right'>
         <div className='social-media-icons-div'>
+        <a href="https://www.onder.org.tr/" target='_blank' rel="noreferrer"><TbWorldShare  className='social-media-icons' /></a>
           <a href="https://www.facebook.com/onderiho" target='_blank' rel="noreferrer"><FaFacebookF className='social-media-icons' /></a>
           <a href="https://www.instagram.com/onderihl" target='_blank' rel="noreferrer"><FaInstagram className='social-media-icons' /></a>
           <a href="https://x.com/ONDERihl target='_blank'" rel="noreferrer"><FaTwitter className='social-media-icons' /></a>
@@ -35,6 +38,7 @@ const Header = () => {
       </div>
       <div className={`fullscreen-menu ${isMenuOpen ? 'active' : ''}`}>
       <div className='social-media-icons-toggle-menu'>
+          <a href="https://www.onder.org.tr/" target='_blank' rel="noreferrer"><TbWorldShare  className='social-media-icons' /></a>
           <a href="https://www.facebook.com/onderiho" target='_blank' rel="noreferrer"><FaFacebookF className='social-media-icons' /></a>
           <a href="https://www.instagram.com/onderihl" target='_blank' rel="noreferrer"><FaInstagram className='social-media-icons' /></a>
           <a href="https://x.com/ONDERihl" target='_blank' rel="noreferrer"><FaTwitter className='social-media-icons' /></a>
