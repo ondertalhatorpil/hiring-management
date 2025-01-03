@@ -325,7 +325,7 @@ const YurtForm = () => {
                                         <p className='ilanŞirketAdı'>Kurum Adı: <br /> <span>{yurtIlanlar.firma_adi}</span></p>
                                      
                                         <p className='İlanÇalışmaTürü'>Çalışma Türü: <br /> <span>{yurtIlanlar.is_tipi}</span></p>
-                                        <p className='İlanTarih'>Yayınlanma Tarihi: <br /> <span>{new Date(yurtIlanlar.ilan_tarihi).toLocaleDateString()}</span></p>
+                                        <p className='İlanTarih'>Son Başvuru: <br /> <span>{new Date(yurtIlanlar.ilan_tarihi).toLocaleDateString()}</span></p>
                                         <p className='İlanNo'>İlan Numarası: <br /><span>{yurtIlanlar.job_id}</span></p>
                                     </div>
                                 </div>
