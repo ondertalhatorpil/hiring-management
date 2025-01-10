@@ -26,7 +26,7 @@ const GMIncele = () => {
       const basvuranlarWithCV = await Promise.all(job.basvuranlar.map(async (applicant) => {
         const cvResponse = await fetch(`${API_URL}/api/cv/${applicant.user_id}`);
         const cvData = await cvResponse.json();
-        return { ...applicant, cv: cvData[0] }; // İlk CV'yi al (birden fazla olabilir)
+        return { ...applicant, cv: cvData[0] }; 
       }));
       return { ...job, basvuranlar: basvuranlarWithCV };
     }));
@@ -56,7 +56,7 @@ const GMIncele = () => {
 
   return (
     <div className="dashboard">
-      <h1 className="main-title">Genel Merkez İş Başvuruları</h1>
+      <h1 className="main-title">Yurt İş Başvuruları</h1>
       
       <div className="dashboard-container">
         {/* Sol Panel - İş İlanları */}
@@ -77,10 +77,8 @@ const GMIncele = () => {
               <div className="job-details">
                 <p className="company-name">{job.ilan_detay.firma_adi}</p>
                 <p className="job-info">
-                  <span>{job.ilan_detay.sehir}</span>
                   <span>{job.ilan_detay.is_tipi}</span>
                 </p>
-                <p className="salary">Maaş: {job.ilan_detay.maas} TL</p>
               </div>
             </div>
           ))}
@@ -107,14 +105,7 @@ const GMIncele = () => {
                     <div className="applicant-details">
                       <p><strong>Email:</strong> {applicant.email}</p>
                       <p><strong>Telefon:</strong> {applicant.cep_telefonu}</p>
-                      <p><strong>Deneyim:</strong></p>
-                      <ul className="experience-list">
-                        {applicant.is_deneyimleri.map((exp, index) => (
-                          <li key={index}>
-                            {exp.firma_adi} - {exp.pozisyon}
-                          </li>
-                        ))}
-                      </ul>
+                      <p><strong>Başvurulan Yurtlar:</strong> {applicant.secilen_yurtlar}</p>
                     </div>
                   </div>
                 ))}

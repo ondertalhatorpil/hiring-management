@@ -21,6 +21,7 @@ const YurtForm = () => {
     const [error] = useState(null);
     const [showErrorPopup, setShowErrorPopup] = useState(false);
     const [kvkkConsent, setKvkkConsent] = useState(false);
+    const [searchTerm, setSearchTerm] = useState('');
 
 
 
@@ -38,6 +39,7 @@ const YurtForm = () => {
         job_id: '',
         cep_telefonu: '',
         ikinci_cep_telefonu: '',
+        secilen_yurtlar: [],
         egitim: [{ okul_adi: '', bolum: '', baslangic_tarihi: '', bitis_tarihi: '' }],
         sertifika: [{ sertifika_adi: '', alindi_tarihi: '' }],
         is_deneyimi: [{ firma_adi: '', pozisyon: '', baslangic_tarihi: '', bitis_tarihi: '' }],
@@ -187,7 +189,9 @@ const YurtForm = () => {
                 ev_adresi: user.ev_adresi,
                 cep_telefonu: user.cep_telefonu,
                 ikinci_cep_telefonu: user.ikinci_cep_telefonu,
-                job_id: user.job_id
+                secilen_yurtlar: user.secilen_yurtlar,
+                job_id: user.job_id,
+                secilen_yurtlar: user.secilen_yurtlar.join(',')
             };
 
             console.log('Gönderilecek kullanıcı verileri:', userData);
@@ -282,6 +286,7 @@ const YurtForm = () => {
                 cep_telefonu: '',
                 job_id: '',
                 ikinci_cep_telefonu: '',
+                secilen_yurtlar: [],
                 egitim: [{ okul_adi: '', bolum: '', baslangic_tarihi: '', bitis_tarihi: '' }],
                 sertifika: [{ sertifika_adi: '', alindi_tarihi: '' }],
                 is_deneyimi: [{ firma_adi: '', pozisyon: '', baslangic_tarihi: '', bitis_tarihi: '' }],
@@ -306,6 +311,42 @@ const YurtForm = () => {
         setShowErrorPopup(false);
     };
 
+
+    const [yurtlar] = useState([
+        "ANKARA ERKEK ÖĞRENCİ YURDU",
+        "AYDIN ERKEK ÖĞRENCİ YURDU",
+        "AYDIN KIZ ÖĞRENCİ YURDU",
+        "BOLU ERKEK ÖĞRENCİ YURDU",
+        "BURSA KAMP, EĞİTİM ve KONAKLAMA MERKEZİ",
+        "İSTANBUL BAĞCILAR ERKEK ÖĞRENCİ YURDU",
+        "İSTANBUL BEŞİKTAŞ KIZ ÖĞRENCİ PANSİYONU",
+        "İSTANBUL BÜYÜKÇEKMECE KAMP, EĞİTİM ve KONAKLAMA MERKEZİ",
+        "İSTANBUL CEVİZLİBAĞ KIZ ÖĞRENCİ PANSİYONU",
+        "İSTANBUL ÇENGELKÖY KIZ ÖĞRENCİ YURDU",
+        "İSTANBUL EYÜP ERKEK ÖĞRENCİ YURDU",
+        "İSTANBUL KÜÇÜKÇEKMECE KIZ ÖĞRENCİ YURDU",
+        "İZMİR ERKEK ÖĞRENCİ YURDU",
+        "KAYSERİ KIZ ÖĞRENCİ YURDU",
+        "KONYA ERKEK ÖĞRENCİ YURDU",
+        "ŞANLIURFA KIZ ÖĞRENCİ YURDU",
+        "YALOVA KIZ ÖĞRENCİ YURDU",
+        "ZONGULDAK ERKEK ÖĞRENCİ YURDU"
+    ]);
+
+    const filteredYurtlar = yurtlar.filter(yurt =>
+        yurt.toLowerCase().includes(searchTerm.toLowerCase())
+    );
+
+    const handleYurtChange = (yurt) => {
+        setUser(prevState => ({
+            ...prevState,
+            secilen_yurtlar: prevState.secilen_yurtlar.includes(yurt)
+                ? prevState.secilen_yurtlar.filter(item => item !== yurt)
+                : [...prevState.secilen_yurtlar, yurt]
+        }));
+    };
+
+
     return (
         <div>
             <Header />
@@ -323,7 +364,7 @@ const YurtForm = () => {
                                     </div>
                                     <div className='ilan-descs-banner'>
                                         <p className='ilanŞirketAdı'>Kurum Adı: <br /> <span>{yurtIlanlar.firma_adi}</span></p>
-                                     
+
                                         <p className='İlanÇalışmaTürü'>Çalışma Türü: <br /> <span>{yurtIlanlar.is_tipi}</span></p>
                                         <p className='İlanTarih'>Son Başvuru: <br /> <span>{new Date(yurtIlanlar.ilan_tarihi).toLocaleDateString()}</span></p>
                                         <p className='İlanNo'>İlan Numarası: <br /><span>{yurtIlanlar.job_id}</span></p>
@@ -339,29 +380,29 @@ const YurtForm = () => {
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className='formUsersSetion'>
-                            <div className='formPhoto'>
-                                <div className="photo-upload-container">
-                                    <div className="photo-upload-preview">
-                                        {photoPreview ? (
-                                            <img src={photoPreview} alt="Önizleme" className="photo-preview" />
-                                        ) : (
-                                            <div className="photo-placeholder">
-                                                Fotoğraf Yükleyin
-                                            </div>
-                                        )}
-                                    </div>
-                                    <label htmlFor="photo-upload" className="photo-upload-label">
-                                        Fotoğraf Seç
-                                        <input
-                                            id="photo-upload"
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handlePhotoChange}
-                                            className="photo-input"
-                                        />
-                                    </label>
+                        <div className='formPhoto'>
+                            <div className="photo-upload-container">
+                                <div className="photo-upload-preview">
+                                    {photoPreview ? (
+                                        <img src={photoPreview} alt="Önizleme" className="photo-preview" />
+                                    ) : (
+                                        <div className="photo-placeholder">
+                                            Fotoğraf Yükleyin
+                                        </div>
+                                    )}
                                 </div>
+                                <label htmlFor="photo-upload" className="photo-upload-label">
+                                    Fotoğraf Seç
+                                    <input
+                                        id="photo-upload"
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handlePhotoChange}
+                                        className="photo-input"
+                                    />
+                                </label>
                             </div>
+                        </div>
                         <div className='formUserOneSection'>
                             <div className='formNameSurname'>
                                 <label>Adınızı Giriniz: </label>
@@ -404,7 +445,42 @@ const YurtForm = () => {
                         </div>
 
                         <div className='FormAdress'>
-                            <label> Ev Adresi Giriniz:</label>
+    <label className="yurt-selection-label">Başvurmak İstediğiniz Yurtlar:</label>
+    <div className="yurt-search">
+        <input
+            type="text"
+            placeholder="Yurt ara..."
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="yurt-search-input"
+        />
+    </div>
+    <div className="yurt-selection-container">
+        {filteredYurtlar.map((yurt, index) => (
+            <div key={index} className="yurt-checkbox-item">
+                <input 
+                    type="checkbox"
+                    id={`yurt-${index}`}
+                    checked={user.secilen_yurtlar.includes(yurt)}
+                    onChange={() => handleYurtChange(yurt)}
+                    className="yurt-checkbox"
+                />
+                <label 
+                    htmlFor={`yurt-${index}`} 
+                    className="yurt-checkbox-label"
+                >
+                    {yurt}
+                </label>
+            </div>
+        ))}
+    </div>
+    <div className="selected-count">
+        Seçilen Yurt Sayısı: {user.secilen_yurtlar.length}
+    </div>
+</div>
+
+                        <div className='FormAdress'>
+                            <label> Başvurmak İstediğiniz Yurt:</label>
                             <input className='formAdress' name="ev_adresi" placeholder="Ev Adresi" value={user.ev_adresi} onChange={handleChange} required />
                         </div>
 
@@ -484,6 +560,7 @@ const YurtForm = () => {
                                     <option value="B Sınıfı">B Sınıfı</option>
                                     <option value="C Sınıfı">C Sınıfı</option>
                                     <option value="D Sınıfı">D Sınıfı</option>
+                                    <option value="E Sınıfı">E Sınıfı</option>
                                 </select>
                             </div>
                         </div>

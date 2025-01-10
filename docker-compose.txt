@@ -1,0 +1,90 @@
+version: '3.8'
+services:
+  db:
+    container_name: onder_mysqldb
+    image: mariadb
+    command: --default-authentication-plugin=mysql_native_password
+    environment:
+      MYSQL_ROOT_PASSWORD: 1453Abdullah*
+      MYSQL_DATABASE: onder
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: mysqladmin ping -h localhost -u root --password=1453Abdullah*
+      interval: 5s
+      timeout: 5s
+      retries: 20
+    networks:
+      - onder-wlan
+    volumes:
+      - db:/var/lib/mysql
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+  phpmyadmin:
+    container_name: onder_phpmyadmin
+    image: phpmyadmin/phpmyadmin
+    environment:
+      PMA_HOST: onder_mysqldb
+      PMA_USER: root
+      PMA_PASSWORD: 1453Abdullah*
+      MYSQL_ROOT_PASSWORD: 1453Abdullah*
+      PMA_ABSOLUTE_URI: http://localhost:8080/
+    ports:
+      - "8080:80"
+    depends_on:
+      - db
+    networks:
+      - onder-wlan
+    restart: unless-stopped
+
+  backend:
+    container_name: onder_backend
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    environment:
+      - NODE_ENV=development
+      - DB_HOST=onder_mysqldb
+      - DB_USER=root
+      - DB_PASSWORD=1453Abdullah*
+      - DB_NAME=onder
+      - PORT=8082
+      - CORS_ORIGIN=http://localhost:3000
+      - UPLOAD_DIR=uploads
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./server:/app
+      - /app/node_modules
+    networks:
+      - onder-wlan
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  frontend:
+    container_name: onder_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    environment:
+      - REACT_APP_API_URL=http://localhost:8082
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - onder-wlan
+    restart: unless-stopped
+
+networks:
+  onder-wlan:
+    name: onder-wlan
+    driver: bridge
+
+volumes:
+  db:

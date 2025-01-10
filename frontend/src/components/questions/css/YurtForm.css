@@ -486,3 +486,104 @@ form  input, select {
         font-size: 17px;
        }
     }
+
+
+
+    .yurt-selection-container {
+        max-height: 300px;
+        overflow-y: auto;
+        border: 1px solid #e0e0e0;
+        border-radius: 8px;
+        padding: 15px;
+        background: white;
+        margin: 10px 0;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+    }
+    
+    .yurt-search {
+        margin-bottom: 15px;
+    }
+    
+    .yurt-search-input {
+        width: 100%;
+        padding: 10px 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 6px;
+        font-size: 14px;
+        transition: all 0.3s ease;
+    }
+    
+    .yurt-search-input:focus {
+        border-color: #2196f3;
+        outline: none;
+        box-shadow: 0 0 0 3px rgba(33, 150, 243, 0.1);
+    }
+    
+    .yurt-checkbox-item {
+        display: flex;
+        align-items: center;
+        padding: 8px 12px;
+        margin: 4px 0;
+        border-radius: 6px;
+        transition: all 0.2s ease;
+    }
+    
+    .yurt-checkbox-item:hover {
+        background-color: #f5f5f5;
+    }
+    
+    .yurt-checkbox {
+        display: none;
+    }
+    
+    .yurt-checkbox-label {
+        position: relative;
+        padding-left: 35px;
+        cursor: pointer;
+        font-size: 14px;
+        line-height: 20px;
+        color: #333;
+        width: 100%;
+    }
+    
+    .yurt-checkbox-label:before {
+        content: '';
+        position: absolute;
+        left: 0;
+        top: 50%;
+        transform: translateY(-50%);
+        width: 22px;
+        height: 22px;
+        border: 2px solid #e0e0e0;
+        border-radius: 4px;
+        transition: all 0.2s ease;
+    }
+    
+    .yurt-checkbox:checked + .yurt-checkbox-label:before {
+        background-color: #D12A2C;
+        border-color: #D12A2C;
+    }
+    
+    .yurt-checkbox:checked + .yurt-checkbox-label:after {
+        content: '✓';
+        position: absolute;
+        left: 6px;
+        top: 50%;
+        transform: translateY(-50%);
+        color: white;
+        font-size: 14px;
+    }
+    
+    .selected-count {
+        margin-top: 10px;
+        font-size: 14px;
+        color: #666;
+        text-align: right;
+    }
+    
+    .yurt-selection-label {
+        font-weight: 600;
+        color: #333;
+        margin-bottom: 10px;
+        display: block;
+    }

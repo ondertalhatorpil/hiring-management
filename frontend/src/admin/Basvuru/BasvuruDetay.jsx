@@ -1,4 +1,4 @@
-import React,{useEffect, useState,useCallback} from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { jsPDF } from 'jspdf';
 import 'jspdf-autotable';
@@ -20,7 +20,7 @@ const BasvuruDetay = () => {
   // fetchPhoto fonksiyonunu useCallback ile tanımla
   const fetchPhoto = useCallback(async () => {
     if (!applicantData?.user_id) return; // user_id yoksa fonksiyondan çık
-    
+
     try {
       const response = await fetch(`${API_URL}/api/photo/${applicantData.user_id}`);
       if (response.ok) {
@@ -69,11 +69,13 @@ const BasvuruDetay = () => {
   const generatePDF = async () => {
     // Türkçe karakter desteği için özel PDF oluşturma
     const doc = new jsPDF('p', 'pt', 'a4', true);
-    
+
     // Türkçe karakter dönüşüm fonksiyonu
     const turkishToASCII = (text) => {
-      const turkishChars = {'ç':'c', 'Ç':'C', 'ğ':'g', 'Ğ':'G', 'ı':'i', 'İ':'I', 
-                           'ö':'o', 'Ö':'O', 'ş':'s', 'Ş':'S', 'ü':'u', 'Ü':'U'};
+      const turkishChars = {
+        'ç': 'c', 'Ç': 'C', 'ğ': 'g', 'Ğ': 'G', 'ı': 'i', 'İ': 'I',
+        'ö': 'o', 'Ö': 'O', 'ş': 's', 'Ş': 'S', 'ü': 'u', 'Ü': 'U'
+      };
       return text.replace(/[çÇğĞıİöÖşŞüÜ]/g, letter => turkishChars[letter] || letter);
     };
 
@@ -85,21 +87,21 @@ const BasvuruDetay = () => {
 
     // Başlangıç ayarları
     doc.setFont("helvetica");
-    
+
     // Profil fotoğrafını ekle
     if (photoUrl) {
       try {
         const imgWidth = 100;
         const imgHeight = 100;
         const imgX = pageWidth - margin - imgWidth;
-        
+
         // Base64'e çevir
         const img = new Image();
         img.src = photoUrl;
         await new Promise((resolve) => {
           img.onload = resolve;
         });
-        
+
         // Canvas kullanarak resmi base64'e çevir
         const canvas = document.createElement('canvas');
         canvas.width = img.width;
@@ -107,14 +109,14 @@ const BasvuruDetay = () => {
         const ctx = canvas.getContext('2d');
         ctx.drawImage(img, 0, 0);
         const base64Image = canvas.toDataURL('image/jpeg');
-        
+
         // PDF'e ekle
         doc.addImage(base64Image, 'JPEG', imgX, yPos, imgWidth, imgHeight);
       } catch (error) {
         console.error('Fotoğraf eklenirken hata:', error);
       }
     }
-    
+
     // Başlık
     doc.setFontSize(22);
     doc.setTextColor(44, 62, 80);
@@ -130,7 +132,7 @@ const BasvuruDetay = () => {
     );
     doc.text(contactInfo, margin, yPos);
     yPos += 15;
-    
+
     // Adres
     const addressText = turkishToASCII(`Adres: ${applicantData.ev_adresi}`);
     doc.text(addressText, margin, yPos);
@@ -155,10 +157,10 @@ const BasvuruDetay = () => {
       head: [],
       body: personalInfoData,
       theme: 'plain',
-      styles: { 
+      styles: {
         font: "helvetica",
-        fontSize: 10, 
-        cellPadding: 5 
+        fontSize: 10,
+        cellPadding: 5
       },
       columnStyles: {
         0: { fontStyle: 'bold', cellWidth: 150 },
@@ -185,12 +187,12 @@ const BasvuruDetay = () => {
       head: [['Okul', 'Bolum', 'Tarih']],
       body: educationData,
       theme: 'striped',
-      headStyles: { 
+      headStyles: {
         fillColor: [41, 128, 185],
         font: "helvetica",
         halign: 'center'
       },
-      styles: { 
+      styles: {
         font: "helvetica",
         fontSize: 10,
         cellPadding: 5
@@ -211,59 +213,106 @@ const BasvuruDetay = () => {
       `${new Date(exp.baslangic_tarihi).toLocaleDateString()} - ${new Date(exp.bitis_tarihi).toLocaleDateString()}`
     ]);
 
-    doc.autoTable({
-      startY: yPos,
-      head: [['Firma', 'Pozisyon', 'Tarih']],
-      body: experienceData,
-      theme: 'striped',
-      headStyles: { 
-        fillColor: [41, 128, 185],
-        font: "helvetica",
-        halign: 'center'
-      },
-      styles: { 
-        font: "helvetica",
-        fontSize: 10,
-        cellPadding: 5
-      }
-    });
+    // İş Deneyimleri bölümünden sonra
+doc.autoTable({
+  startY: yPos,
+  head: [['Firma', 'Pozisyon', 'Tarih']],
+  body: experienceData,
+  theme: 'striped',
+  headStyles: {
+    fillColor: [41, 128, 185],
+    font: "helvetica",
+    halign: 'center'
+  },
+  styles: {
+    font: "helvetica",
+    fontSize: 10,
+    cellPadding: 5
+  }
+});
 
-    // İlgi Alanları
-    const remainingSpaceAfterExp = pageHeight - doc.lastAutoTable.finalY;
-    const estimatedSpaceForInt = 60; // İlgi alanları için tahmini alan
+// Seçilen Yurtlar için boşluk kontrolü
+const remainingSpaceAfterExp = pageHeight - doc.lastAutoTable.finalY;
+const estimatedSpaceForYurt = 60;
 
-    if (remainingSpaceAfterExp < estimatedSpaceForInt) {
-      doc.addPage();
-      yPos = margin;
-    } else {
-      yPos = doc.lastAutoTable.finalY + 20;
+if (remainingSpaceAfterExp < estimatedSpaceForYurt) {
+  doc.addPage();
+  yPos = margin;
+} else {
+  yPos = doc.lastAutoTable.finalY + 20;
+}
+
+// Seçilen Yurtlar bölümü
+doc.setFontSize(14);
+doc.setTextColor(41, 128, 185);
+doc.text(turkishToASCII('Secilen Yurtlar'), margin, yPos);
+yPos += 10;
+
+if (applicantData.secilen_yurtlar) {
+  const yurtlarArray = applicantData.secilen_yurtlar.split(',').map(yurt => [
+    turkishToASCII(yurt.trim())
+  ]);
+
+  doc.autoTable({
+    startY: yPos,
+    head: [['Yurt Adi']],
+    body: yurtlarArray,
+    theme: 'striped',
+    headStyles: {
+      fillColor: [41, 128, 185],
+      font: "helvetica",
+      halign: 'center'
+    },
+    styles: {
+      font: "helvetica",
+      fontSize: 10,
+      cellPadding: 5
     }
+  });
+}
 
-    doc.setFontSize(14);
-    doc.setTextColor(41, 128, 185);
-    doc.text(turkishToASCII('Ilgi Alanlari'), margin, yPos);
-    yPos += 10;
 
-    const interestsData = applicantData.ilgi_alanlari.map(interest => [
-      turkishToASCII(interest.ilgi_alani)
-    ]);
 
-    doc.autoTable({
-      startY: yPos,
-      head: [['Ilgi Alani']],
-      body: interestsData,
-      theme: 'striped',
-      headStyles: { 
-        fillColor: [41, 128, 185],
-        font: "helvetica",
-        halign: 'center'
-      },
-      styles: { 
-        font: "helvetica",
-        fontSize: 10,
-        cellPadding: 5
-      }
-    });
+
+
+    
+
+ // İlgi Alanları
+const remainingSpaceAfterYurtlar = pageHeight - doc.lastAutoTable.finalY;
+const estimatedSpaceForInterests = 60; // İlgi alanları için tahmini alan
+
+if (remainingSpaceAfterYurtlar < estimatedSpaceForInterests) {
+  doc.addPage();
+  yPos = margin;
+} else {
+  yPos = doc.lastAutoTable.finalY + 20;
+}
+
+doc.setFontSize(14);
+doc.setTextColor(41, 128, 185);
+doc.text(turkishToASCII('Ilgi Alanlari'), margin, yPos);
+yPos += 10;
+
+const interestsData = applicantData.ilgi_alanlari.map(interest => [
+  turkishToASCII(interest.ilgi_alani)
+]);
+
+doc.autoTable({
+  startY: yPos,
+  head: [['Ilgi Alani']],
+  body: interestsData,
+  theme: 'striped',
+  headStyles: {
+    fillColor: [41, 128, 185],
+    font: "helvetica",
+    halign: 'center'
+  },
+  styles: {
+    font: "helvetica",
+    fontSize: 10,
+    cellPadding: 5
+  }
+});
 
     // Sertifikalar
     const remainingSpaceAfterInt = pageHeight - doc.lastAutoTable.finalY;
@@ -291,12 +340,12 @@ const BasvuruDetay = () => {
       head: [['Sertifika', 'Alinma Tarihi']],
       body: certificateData,
       theme: 'striped',
-      headStyles: { 
+      headStyles: {
         fillColor: [41, 128, 185],
         font: "helvetica",
         halign: 'center'
       },
-      styles: { 
+      styles: {
         font: "helvetica",
         fontSize: 10,
         cellPadding: 5
@@ -329,12 +378,12 @@ const BasvuruDetay = () => {
       head: [['Dil', 'Seviye']],
       body: languageData,
       theme: 'striped',
-      headStyles: { 
+      headStyles: {
         fillColor: [41, 128, 185],
         font: "helvetica",
         halign: 'center'
       },
-      styles: { 
+      styles: {
         font: "helvetica",
         fontSize: 10,
         cellPadding: 5
@@ -367,12 +416,12 @@ const BasvuruDetay = () => {
       head: [['Isim', 'Iletisim']],
       body: referenceData,
       theme: 'striped',
-      headStyles: { 
+      headStyles: {
         fillColor: [41, 128, 185],
         font: "helvetica",
         halign: 'center'
       },
-      styles: { 
+      styles: {
         font: "helvetica",
         fontSize: 10,
         cellPadding: 5
@@ -401,7 +450,7 @@ const BasvuruDetay = () => {
         </div>
 
         <div className="main-info">
-        <div className="profile-info">
+          <div className="profile-info">
             <h1>{applicantData.ad} {applicantData.soyad}</h1>
             <div className="badges">
               <span className="badge">{applicantData.mezuniyet}</span>
@@ -414,7 +463,7 @@ const BasvuruDetay = () => {
               <img src={photoUrl} alt={`${applicantData.ad} ${applicantData.soyad}`} />
             </div>
           )}
-          
+
         </div>
 
         <div className="detail-grid">
@@ -437,7 +486,7 @@ const BasvuruDetay = () => {
                 <h3>{edu.okul_adi}</h3>
                 <p>{edu.bolum}</p>
                 <p className="date-range">
-                  {new Date(edu.baslangic_tarihi).toLocaleDateString('tr-TR')} - 
+                  {new Date(edu.baslangic_tarihi).toLocaleDateString('tr-TR')} -
                   {new Date(edu.bitis_tarihi).toLocaleDateString('tr-TR')}
                 </p>
               </div>
@@ -451,12 +500,29 @@ const BasvuruDetay = () => {
                 <h3>{exp.firma_adi}</h3>
                 <p>{exp.pozisyon}</p>
                 <p className="date-range">
-                  {new Date(exp.baslangic_tarihi).toLocaleDateString('tr-TR')} - 
+                  {new Date(exp.baslangic_tarihi).toLocaleDateString('tr-TR')} -
                   {new Date(exp.bitis_tarihi).toLocaleDateString('tr-TR')}
                 </p>
               </div>
             ))}
           </div>
+
+
+          <div className="detail-card">
+            <h2>Seçilen Yurtlar</h2>
+            {applicantData.secilen_yurtlar && (
+              <div className="selected-dorms">
+                <p><strong>Seçilen Yurtlar:</strong></p>
+                <ul>
+                  {applicantData.secilen_yurtlar.split(',').map((yurt, index) => (
+                    <li key={index}>{yurt}</li>
+                  ))}
+                </ul>
+              </div>
+            )}
+          </div>
+
+
 
           <div className="detail-card">
             <h2>İlgi Alanları</h2>

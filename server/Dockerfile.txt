@@ -1,0 +1,22 @@
+# Backend Dockerfile (./server/Dockerfile)
+FROM node:18-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+# Nodemon'u global olarak yükle
+RUN npm install -g nodemon
+
+# Bağımlılıkları yükle
+RUN npm install
+
+COPY . .
+
+ENV NODE_ENV=development
+ENV PORT=8082
+
+EXPOSE 8082
+
+# start scriptini kullan
+CMD ["npm", "start"]

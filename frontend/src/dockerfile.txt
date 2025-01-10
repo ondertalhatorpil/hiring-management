@@ -1,0 +1,26 @@
+# Frontend için Dockerfile
+FROM node:18-alpine
+
+WORKDIR /app
+
+# package.json ve package-lock.json (varsa) kopyala
+COPY package*.json ./
+
+# Bağımlılıkları yükle
+RUN npm install
+
+# Tüm kaynak kodları kopyala
+COPY . .
+
+# Development ortamı için gerekli env değişkenlerini ayarla
+ENV NODE_ENV=development
+ENV REACT_APP_API_URL=http://localhost:8082
+ENV WDS_SOCKET_PORT=0
+ENV CHOKIDAR_USEPOLLING=true
+ENV WATCHPACK_POLLING=true
+
+# Port'u aç
+EXPOSE 3000
+
+# Development server'ı başlat
+CMD ["npm", "start"]
