@@ -445,42 +445,42 @@ const YurtForm = () => {
                         </div>
 
                         <div className='FormAdress'>
-    <label className="yurt-selection-label">Başvurmak İstediğiniz Yurtlar:</label>
-    <div className="yurt-search">
-        <input
-            type="text"
-            placeholder="Yurt ara..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="yurt-search-input"
-        />
-    </div>
-    <div className="yurt-selection-container">
-        {filteredYurtlar.map((yurt, index) => (
-            <div key={index} className="yurt-checkbox-item">
-                <input 
-                    type="checkbox"
-                    id={`yurt-${index}`}
-                    checked={user.secilen_yurtlar.includes(yurt)}
-                    onChange={() => handleYurtChange(yurt)}
-                    className="yurt-checkbox"
-                />
-                <label 
-                    htmlFor={`yurt-${index}`} 
-                    className="yurt-checkbox-label"
-                >
-                    {yurt}
-                </label>
-            </div>
-        ))}
-    </div>
-    <div className="selected-count">
-        Seçilen Yurt Sayısı: {user.secilen_yurtlar.length}
-    </div>
-</div>
+                            <label className="yurt-selection-label">Başvurmak İstediğiniz Yurtlar:</label>
+                            <div className="yurt-search">
+                                <input
+                                    type="text"
+                                    placeholder="Yurt ara..."
+                                    value={searchTerm}
+                                    onChange={(e) => setSearchTerm(e.target.value)}
+                                    className="yurt-search-input"
+                                />
+                            </div>
+                            <div className="yurt-selection-container">
+                                {filteredYurtlar.map((yurt, index) => (
+                                    <div key={index} className="yurt-checkbox-item">
+                                        <input
+                                            type="checkbox"
+                                            id={`yurt-${index}`}
+                                            checked={user.secilen_yurtlar.includes(yurt)}
+                                            onChange={() => handleYurtChange(yurt)}
+                                            className="yurt-checkbox"
+                                        />
+                                        <label
+                                            htmlFor={`yurt-${index}`}
+                                            className="yurt-checkbox-label"
+                                        >
+                                            {yurt}
+                                        </label>
+                                    </div>
+                                ))}
+                            </div>
+                            <div className="selected-count">
+                                Seçilen Yurt Sayısı: {user.secilen_yurtlar.length}
+                            </div>
+                        </div>
 
                         <div className='FormAdress'>
-                            <label> Başvurmak İstediğiniz Yurt:</label>
+                            <label>Ev Adresi:</label>
                             <input className='formAdress' name="ev_adresi" placeholder="Ev Adresi" value={user.ev_adresi} onChange={handleChange} required />
                         </div>
 
