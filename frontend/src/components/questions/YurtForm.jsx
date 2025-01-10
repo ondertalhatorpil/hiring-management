@@ -175,7 +175,6 @@ const YurtForm = () => {
         }
     
         try {
-            // secilen_yurtlar'ı string'e çeviriyoruz
             const secilenYurtlarString = user.secilen_yurtlar.join(', ');
     
             const userData = {
@@ -195,13 +194,13 @@ const YurtForm = () => {
                 secilen_yurtlar: secilenYurtlarString
             };
     
-            console.log('Gönderilecek kullanıcı verileri:', userData);
-            console.log('Seçilen yurtlar:', user.secilen_yurtlar);
-            console.log('String hali:', secilenYurtlarString);
+            console.log('API isteği başlıyor:', userData);
+            console.log('API URL:', `${API_URL}/api/users`);
     
-            // Ana kullanıcı kaydını oluştur
             const userResponse = await axios.post(`${API_URL}/api/users`, userData);
+            console.log('API yanıtı:', userResponse.data);
             const userId = userResponse.data.user_id;
+    
     
             // Fotoğraf yükleme
             if (user.photo) {
