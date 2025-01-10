@@ -175,7 +175,6 @@ const YurtForm = () => {
         }
     
         try {
-            const secilenYurtlarString = user.secilen_yurtlar.join(', ');
     
             const userData = {
                 ad: user.ad,
@@ -191,12 +190,12 @@ const YurtForm = () => {
                 cep_telefonu: user.cep_telefonu,
                 ikinci_cep_telefonu: user.ikinci_cep_telefonu,
                 job_id: id,
-                secilen_yurtlar: secilenYurtlarString
+                secilen_yurtlar: JSON.stringify(user.secilen_yurtlar)
             };
     
             console.log('API isteği başlıyor:', userData);
             console.log('API URL:', `${API_URL}/api/users`);
-    
+            console.log('Sending secilen_yurtlar:', userData.secilen_yurtlar);
             const userResponse = await axios.post(`${API_URL}/api/users`, userData);
             console.log('API yanıtı:', userResponse.data);
             const userId = userResponse.data.user_id;

@@ -67,11 +67,14 @@ app.post('/api/users', (req, res) => {
         job_id
     } = req.body;
 
-    // secilen_yurtlar kontrolü ve dönüşümü
-    const yurtlarDegeri = secilen_yurtlar || '';
+        const yurtlarDegeri = secilen_yurtlar ? 
+        (typeof secilen_yurtlar === 'string' ? secilen_yurtlar : JSON.stringify(secilen_yurtlar)) : 
+        '[]';
 
     console.log('Kaydedilecek yurt değeri:', yurtlarDegeri);
     console.log('Yurt değerinin tipi:', typeof yurtlarDegeri);
+    console.log('Received secilen_yurtlar:', req.body.secilen_yurtlar);
+    console.log('Processed yurtlarDegeri:', yurtlarDegeri);
 
     const query = `
         INSERT INTO users 
