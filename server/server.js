@@ -49,7 +49,10 @@ app.get('/api/egitim/:user_id', (req, res) => {
 });
 
 app.post('/api/users', (req, res) => {
-    console.log('POST /api/users - Gelen veri:', req.body);
+    // Gelen tüm veriyi logla
+    console.log('=== USERS POST İSTEĞİ BAŞLADI ===');
+    console.log('Gelen veri:', JSON.stringify(req.body, null, 2));
+    console.log('secilen_yurtlar:', req.body.secilen_yurtlar);
 
     const {
         ad,
@@ -68,30 +71,26 @@ app.post('/api/users', (req, res) => {
         job_id
     } = req.body;
 
-    console.log('secilen_yurtlar değeri:', secilen_yurtlar);
-    console.log('secilen_yurtlar tipi:', typeof secilen_yurtlar);
+    // Destructure edilen veriyi logla
+    console.log('Ayrıştırılan secilen_yurtlar:', secilen_yurtlar);
 
     let yurtlarDegeri = secilen_yurtlar;
-    if (Array.isArray(secilen_yurtlar)) {
-        yurtlarDegeri = secilen_yurtlar.join(',');
-    }
+    console.log('İşlem öncesi yurtlarDegeri:', yurtlarDegeri);
 
-    console.log('Veritabanına yazılacak yurtlar değeri:', yurtlarDegeri);
-
+    // SQL sorgusunu ve değerlerini logla
     const jobIdValue = job_id ? job_id : null;
-
     const query = 'INSERT INTO users (ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, secilen_yurtlar, job_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
     const values = [ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, yurtlarDegeri, jobIdValue];
 
-    console.log('SQL Query:', query);
-    console.log('SQL Values:', values);
+    console.log('SQL Değerleri:', values);
 
     db.query(query, values, (err, results) => {
         if (err) {
-            console.error('Kullanıcı kayıt hatası:', err);
+            console.error('HATA:', err);
             return res.status(500).json({ error: err.message });
         }
-        console.log('Kayıt başarılı. Sonuç:', results);
+        console.log('Kayıt başarılı:', results);
+        console.log('=== USERS POST İSTEĞİ TAMAMLANDI ===');
         res.status(201).json({
             message: 'Kullanıcı başarıyla kaydedildi',
             user_id: results.insertId
