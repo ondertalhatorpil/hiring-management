@@ -45,12 +45,14 @@ services:
   db:
     container_name: onder_mysqldb
     image: mariadb
-    command: --default-authentication-plugin=mysql_native_password
+    command: 
+      - '--default-authentication-plugin=mysql_native_password'
+      - '--bind-address=0.0.0.0'
     restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 1453Abdullah*
       MYSQL_DATABASE: onder
-      MARIADB_MYSQL_LOCALHOST_USER: 1
+      MYSQL_ROOT_HOST: '%'
     healthcheck:
       test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
       start_period: 30s
@@ -67,10 +69,15 @@ services:
     container_name: onder_phpmyadmin
     image: phpmyadmin/phpmyadmin
     environment:
+      PMA_HOST: onder_mysqldb
+      PMA_PORT: 3306
       PMA_ARBITRARY: 1
-      MYSQL_ROOT_PASSWORD: 1453Abdullah*
+      PMA_USER: root
+      PMA_PASSWORD: 1453Abdullah*
     ports:
       - "8147:80"
+    depends_on:
+      - db
     networks:
       - onder-wlan
     restart: unless-stopped
