@@ -49,11 +49,7 @@ app.get('/api/egitim/:user_id', (req, res) => {
 });
 
 app.post('/api/users', (req, res) => {
-    // Gelen tüm veriyi logla
     console.log('=== USERS POST İSTEĞİ BAŞLADI ===');
-    console.log('Gelen veri:', JSON.stringify(req.body, null, 2));
-    console.log('secilen_yurtlar:', req.body.secilen_yurtlar);
-
     const {
         ad,
         soyad,
@@ -71,18 +67,25 @@ app.post('/api/users', (req, res) => {
         job_id
     } = req.body;
 
-    // Destructure edilen veriyi logla
-    console.log('Ayrıştırılan secilen_yurtlar:', secilen_yurtlar);
+    // secilen_yurtlar kontrolü ve dönüşümü
+    const yurtlarDegeri = secilen_yurtlar || '';
 
-    let yurtlarDegeri = secilen_yurtlar;
-    console.log('İşlem öncesi yurtlarDegeri:', yurtlarDegeri);
+    console.log('Kaydedilecek yurt değeri:', yurtlarDegeri);
+    console.log('Yurt değerinin tipi:', typeof yurtlarDegeri);
 
-    // SQL sorgusunu ve değerlerini logla
-    const jobIdValue = job_id ? job_id : null;
-    const query = 'INSERT INTO users (ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, secilen_yurtlar, job_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
-    const values = [ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, yurtlarDegeri, jobIdValue];
+    const query = `
+        INSERT INTO users 
+        (ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, 
+        surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, 
+        secilen_yurtlar, job_id) 
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    `;
 
-    console.log('SQL Değerleri:', values);
+    const values = [
+        ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu,
+        surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu,
+        yurtlarDegeri, job_id
+    ];
 
     db.query(query, values, (err, results) => {
         if (err) {
@@ -90,7 +93,6 @@ app.post('/api/users', (req, res) => {
             return res.status(500).json({ error: err.message });
         }
         console.log('Kayıt başarılı:', results);
-        console.log('=== USERS POST İSTEĞİ TAMAMLANDI ===');
         res.status(201).json({
             message: 'Kullanıcı başarıyla kaydedildi',
             user_id: results.insertId
@@ -827,18 +829,6 @@ const storage = multer.diskStorage({
 });
 
 const upload = multer({ storage: storage });
-
-// Routes
-app.post('/api/users', async (req, res) => {
-    const userData = req.body;
-    try {
-        const [result] = await db.promise().query('INSERT INTO users SET ?', userData);
-        res.status(201).json({ user_id: result.insertId, message: 'Kullanıcı başarıyla oluşturuldu' });
-    } catch (error) {
-        console.error('Kullanıcı oluşturma hatası:', error);
-        res.status(500).json({ error: 'Kullanıcı oluşturulurken bir hata oluştu' });
-    }
-});
 
 app.post('/api/upload-cv', upload.single('cv'), async (req, res) => {
     console.log('CV yükleme isteği alındı');

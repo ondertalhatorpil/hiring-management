@@ -16,9 +16,9 @@ CREATE TABLE users (
     dogum_tarihi DATE,
     ev_adresi TEXT,
     cep_telefonu VARCHAR(20),
-    secilen_yurtlar Text,
     ikinci_cep_telefonu VARCHAR(20),
     job_id INT,
+    secilen_yurtlar TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
