@@ -189,7 +189,6 @@ const YurtForm = () => {
                 ev_adresi: user.ev_adresi,
                 cep_telefonu: user.cep_telefonu,
                 ikinci_cep_telefonu: user.ikinci_cep_telefonu,
-                secilen_yurtlar: user.secilen_yurtlar,
                 job_id: user.job_id,
                 secilen_yurtlar: user.secilen_yurtlar.join(',')
             };
