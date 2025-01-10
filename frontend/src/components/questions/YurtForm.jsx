@@ -168,14 +168,16 @@ const YurtForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
-
+    
         if (!kvkkConsent) {
             alert('Lütfen KVKK metnini onaylayınız.');
             return;
         }
-
+    
         try {
+            // secilen_yurtlar'ı string'e çeviriyoruz
+            const secilenYurtlarString = user.secilen_yurtlar.join(', ');
+    
             const userData = {
                 ad: user.ad,
                 soyad: user.soyad,
@@ -189,33 +191,32 @@ const YurtForm = () => {
                 ev_adresi: user.ev_adresi,
                 cep_telefonu: user.cep_telefonu,
                 ikinci_cep_telefonu: user.ikinci_cep_telefonu,
-                job_id: user.job_id,
-                secilen_yurtlar: JSON.stringify(user.secilen_yurtlar), 
+                job_id: id,
+                secilen_yurtlar: secilenYurtlarString
             };
-
+    
             console.log('Gönderilecek kullanıcı verileri:', userData);
             console.log('Seçilen yurtlar:', user.secilen_yurtlar);
-            console.log('Gönderilen veri:', userData.secilen_yurtlar);
-
-
+            console.log('String hali:', secilenYurtlarString);
+    
             // Ana kullanıcı kaydını oluştur
             const userResponse = await axios.post(`${API_URL}/api/users`, userData);
             const userId = userResponse.data.user_id;
-
+    
+            // Fotoğraf yükleme
             if (user.photo) {
                 const photoFormData = new FormData();
                 photoFormData.append('photo', user.photo);
                 photoFormData.append('userId', userId);
-
+    
                 await axios.post(`${API_URL}/api/upload-photo`, photoFormData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
                     }
                 });
             }
-
+    
             // CV yükleme
-
             if (user.cv) {
                 const formData = new FormData();
                 formData.append('cv', user.cv);
@@ -229,50 +230,50 @@ const YurtForm = () => {
                 });
                 console.log('CV yükleme yanıtı:', response);
             }
-
-
+    
+            // Başvuru kaydı
             const basvuruResponse = await axios.post(`${API_URL}/api/basvurular`, {
                 userId: userId,
                 ilanId: id,
                 ilantype: "yurt"
             });
-
+    
             if (!basvuruResponse.data.id) {
                 throw new Error('Başvuru kaydedilemedi');
             }
-
-
+    
             // Diğer bilgileri gönder
             await axios.post(`${API_URL}/api/egitim`, {
                 egitimBilgileri: user.egitim,
                 userId: userId
             });
-
+    
             await axios.post(`${API_URL}/api/is_deneyimi`, {
                 isDeneyimiBilgileri: user.is_deneyimi,
                 userId: userId
             });
-
+    
             await axios.post(`${API_URL}/api/sertifika`, {
                 sertifikaBilgileri: user.sertifika,
                 userId: userId
             });
-
+    
             await axios.post(`${API_URL}/api/yabanci_dil`, {
                 yabanciDilBilgileri: user.yabanci_dil,
                 userId: userId
             });
-
+    
             await axios.post(`${API_URL}/api/referanslar`, {
                 referansBilgileri: user.referans,
                 userId: userId
             });
-
+    
             await axios.post(`${API_URL}/api/ilgi_alanlari`, {
                 ilgiAlanlari: user.ilgi_alanlari,
                 userId: userId
             });
-
+    
+            // Form başarıyla gönderildikten sonra state'i sıfırla
             setUser({
                 ad: '',
                 soyad: '',
@@ -296,11 +297,10 @@ const YurtForm = () => {
                 ilgi_alanlari: [{ ilgi_alani: '' }],
                 cv: null,
                 photo: null
-
             });
             setPhotoPreview(null);
-            navigate('/success'); // history.push yerine navigate kullanıyoruz
-
+            navigate('/success');
+    
         } catch (error) {
             console.error('Hata:', error);
             alert('Form gönderilirken bir hata oluştu: ' + error.message);
