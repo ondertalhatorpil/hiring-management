@@ -67,14 +67,10 @@ services:
     container_name: onder_phpmyadmin
     image: phpmyadmin/phpmyadmin
     environment:
-      PMA_HOST: onder_mysqldb
-      PMA_USER: root
-      PMA_PASSWORD: 1453Abdullah*
+      PMA_ARBITRARY: 1
       MYSQL_ROOT_PASSWORD: 1453Abdullah*
     ports:
-      - "8279:80"
-    depends_on:
-      - db
+      - "8147:80"
     networks:
       - onder-wlan
     restart: unless-stopped
