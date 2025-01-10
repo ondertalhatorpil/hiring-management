@@ -71,7 +71,7 @@ services:
       PMA_USER: root
       PMA_PASSWORD: 1453Abdullah*
       MYSQL_ROOT_PASSWORD: 1453Abdullah*
-      PMA_ABSOLUTE_URI: http://kariyer.onder.org.tr/
+      PMA_ABSOLUTE_URI: https://kariyer.onder.org.tr/
     ports:
       - "8044:80"
     depends_on:
