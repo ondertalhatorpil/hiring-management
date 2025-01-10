@@ -190,10 +190,12 @@ const YurtForm = () => {
                 cep_telefonu: user.cep_telefonu,
                 ikinci_cep_telefonu: user.ikinci_cep_telefonu,
                 job_id: user.job_id,
-                secilen_yurtlar: user.secilen_yurtlar.join(',')
+                secilen_yurtlar: JSON.stringify(user.secilen_yurtlar), 
             };
 
             console.log('Gönderilecek kullanıcı verileri:', userData);
+            console.log('Seçilen yurtlar:', user.secilen_yurtlar);
+            console.log('Gönderilen veri:', userData.secilen_yurtlar);
 
 
             // Ana kullanıcı kaydını oluştur

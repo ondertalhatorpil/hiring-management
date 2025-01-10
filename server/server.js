@@ -49,37 +49,61 @@ app.get('/api/egitim/:user_id', (req, res) => {
 });
 
 app.post('/api/users', (req, res) => {
-    const { 
-        ad, 
+    const {
+        ad,
         soyad,
-        email, 
-        cinsiyet, 
-        mezuniyet, 
+        email,
+        cinsiyet,
+        mezuniyet,
         medeni_durum,
-        askerlik_durumu, 
-        surucu_belgesi, 
-        dogum_tarihi, 
-        ev_adresi, 
-        cep_telefonu, 
+        askerlik_durumu,
+        surucu_belgesi,
+        dogum_tarihi,
+        ev_adresi,
+        cep_telefonu,
         ikinci_cep_telefonu,
         secilen_yurtlar,
         job_id
     } = req.body;
 
-    // job_id kontrolü ekleyelim
+    // job_id kontrolü
     const jobIdValue = job_id ? job_id : null;
+
+    // secilen_yurtlar için kontrol ve dönüşüm
+    let yurtlarDegeri;
+    try {
+        // Eğer array gelirse string'e çevir
+        if (Array.isArray(secilen_yurtlar)) {
+            yurtlarDegeri = secilen_yurtlar.join(',');
+        }
+        // Eğer string gelirse olduğu gibi kullan
+        else if (typeof secilen_yurtlar === 'string') {
+            yurtlarDegeri = secilen_yurtlar;
+        }
+        // Hiçbiri değilse boş string kullan
+        else {
+            yurtlarDegeri = '';
+        }
+
+        console.log('Gelen secilen_yurtlar değeri:', secilen_yurtlar);
+        console.log('Veritabanına yazılacak değer:', yurtlarDegeri);
+
+    } catch (e) {
+        console.error('secilen_yurtlar dönüşüm hatası:', e);
+        yurtlarDegeri = '';
+    }
 
     db.query(
         'INSERT INTO users (ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, secilen_yurtlar, job_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu,secilen_yurtlar, jobIdValue],
+        [ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, yurtlarDegeri, jobIdValue],
         (err, results) => {
             if (err) {
                 console.error('Kullanıcı kayıt hatası:', err);
                 return res.status(500).json({ error: err.message });
             }
-            res.status(201).json({ 
+            res.status(201).json({
                 message: 'Kullanıcı başarıyla kaydedildi',
-                user_id: results.insertId 
+                user_id: results.insertId
             });
         }
     );
