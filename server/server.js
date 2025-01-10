@@ -68,6 +68,8 @@ app.post('/api/users', (req, res) => {
 
     // job_id kontrolü
     const jobIdValue = job_id ? job_id : null;
+    console.log('Backend - gelen secilen_yurtlar:', secilen_yurtlar);
+    console.log('Backend - gelen tüm veri:', req.body);
 
     // secilen_yurtlar için kontrol ve dönüşüm
     let yurtlarDegeri;
@@ -87,6 +89,8 @@ app.post('/api/users', (req, res) => {
 
         console.log('Gelen secilen_yurtlar değeri:', secilen_yurtlar);
         console.log('Veritabanına yazılacak değer:', yurtlarDegeri);
+        console.log('Backend - veritabanına yazılacak değer:', yurtlarDegeri);
+
 
     } catch (e) {
         console.error('secilen_yurtlar dönüşüm hatası:', e);
