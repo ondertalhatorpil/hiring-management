@@ -49,6 +49,8 @@ app.get('/api/egitim/:user_id', (req, res) => {
 });
 
 app.post('/api/users', (req, res) => {
+    console.log('POST /api/users - Gelen veri:', req.body);
+
     const {
         ad,
         soyad,
@@ -66,51 +68,35 @@ app.post('/api/users', (req, res) => {
         job_id
     } = req.body;
 
-    // job_id kontrolü
-    const jobIdValue = job_id ? job_id : null;
-    console.log('Backend - gelen secilen_yurtlar:', secilen_yurtlar);
-    console.log('Backend - gelen tüm veri:', req.body);
+    console.log('secilen_yurtlar değeri:', secilen_yurtlar);
+    console.log('secilen_yurtlar tipi:', typeof secilen_yurtlar);
 
-    // secilen_yurtlar için kontrol ve dönüşüm
-    let yurtlarDegeri;
-    try {
-        // Eğer array gelirse string'e çevir
-        if (Array.isArray(secilen_yurtlar)) {
-            yurtlarDegeri = secilen_yurtlar.join(',');
-        }
-        // Eğer string gelirse olduğu gibi kullan
-        else if (typeof secilen_yurtlar === 'string') {
-            yurtlarDegeri = secilen_yurtlar;
-        }
-        // Hiçbiri değilse boş string kullan
-        else {
-            yurtlarDegeri = '';
-        }
-
-        console.log('Gelen secilen_yurtlar değeri:', secilen_yurtlar);
-        console.log('Veritabanına yazılacak değer:', yurtlarDegeri);
-        console.log('Backend - veritabanına yazılacak değer:', yurtlarDegeri);
-
-
-    } catch (e) {
-        console.error('secilen_yurtlar dönüşüm hatası:', e);
-        yurtlarDegeri = '';
+    let yurtlarDegeri = secilen_yurtlar;
+    if (Array.isArray(secilen_yurtlar)) {
+        yurtlarDegeri = secilen_yurtlar.join(',');
     }
 
-    db.query(
-        'INSERT INTO users (ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, secilen_yurtlar, job_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, yurtlarDegeri, jobIdValue],
-        (err, results) => {
-            if (err) {
-                console.error('Kullanıcı kayıt hatası:', err);
-                return res.status(500).json({ error: err.message });
-            }
-            res.status(201).json({
-                message: 'Kullanıcı başarıyla kaydedildi',
-                user_id: results.insertId
-            });
+    console.log('Veritabanına yazılacak yurtlar değeri:', yurtlarDegeri);
+
+    const jobIdValue = job_id ? job_id : null;
+
+    const query = 'INSERT INTO users (ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, secilen_yurtlar, job_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)';
+    const values = [ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, yurtlarDegeri, jobIdValue];
+
+    console.log('SQL Query:', query);
+    console.log('SQL Values:', values);
+
+    db.query(query, values, (err, results) => {
+        if (err) {
+            console.error('Kullanıcı kayıt hatası:', err);
+            return res.status(500).json({ error: err.message });
         }
-    );
+        console.log('Kayıt başarılı. Sonuç:', results);
+        res.status(201).json({
+            message: 'Kullanıcı başarıyla kaydedildi',
+            user_id: results.insertId
+        });
+    });
 });
 
 
