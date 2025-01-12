@@ -7,12 +7,9 @@ import Footer from '../Footer/Footer';
 import { FiArrowLeft } from "react-icons/fi";
 import './css/YurtForm.css'
 
-
 const API_URL = process.env.REACT_APP_API_URL;
 
 const YurtForm = () => {
-
-
     const { id } = useParams();
     const navigate = useNavigate();
 
@@ -21,8 +18,8 @@ const YurtForm = () => {
     const [error] = useState(null);
     const [showErrorPopup, setShowErrorPopup] = useState(false);
     const [kvkkConsent, setKvkkConsent] = useState(false);
-
-
+    const [selectedYurts, setSelectedYurts] = useState([]);
+    const [photoPreview, setPhotoPreview] = useState(null);
 
     const [user, setUser] = useState({
         ad: '',
@@ -46,29 +43,21 @@ const YurtForm = () => {
         ilgi_alanlari: [{ ilgi_alani: '' }],
         cv: null,
         photo: null
-
     });
 
-
-    const [photoPreview, setPhotoPreview] = useState(null);
-
-    // Fotoğraf değişikliği için handler
     const handlePhotoChange = (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Dosya boyutu kontrolü (5MB)
             if (file.size > 5 * 1024 * 1024) {
                 alert('Dosya boyutu 5MB\'dan küçük olmalıdır');
                 return;
             }
 
-            // Dosya tipi kontrolü
             if (!file.type.startsWith('image/')) {
                 alert('Lütfen geçerli bir resim dosyası seçin');
                 return;
             }
 
-            // Önizleme oluştur
             const reader = new FileReader();
             reader.onload = () => {
                 setPhotoPreview(reader.result);
@@ -79,9 +68,7 @@ const YurtForm = () => {
         }
     };
 
-
     useEffect(() => {
-        // Component mount olduğunda
         console.log('Component mounted, id:', id);
         console.log('Current URL:', window.location.href);
 
@@ -99,7 +86,6 @@ const YurtForm = () => {
                 setyurtIlanlar(response.data)
             } catch (err) {
                 console.error('API hatası:', err);
-
             }
         };
 
@@ -109,7 +95,6 @@ const YurtForm = () => {
     const handleFileChange = (e) => {
         setUser({ ...user, cv: e.target.files[0] });
     };
-
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -125,7 +110,6 @@ const YurtForm = () => {
         newArray[index][name] = value;
         setUser({ ...user, [field]: newArray });
     };
-
 
     const addToArray = (field) => {
         const newEntry = {};
@@ -163,24 +147,20 @@ const YurtForm = () => {
         setUser({ ...user, [field]: [...user[field], newEntry] });
     };
 
-
     const handleSubmit = async (e) => {
         e.preventDefault();
-    
-        // KVKK kontrolü
+
         if (!kvkkConsent) {
             alert('Lütfen KVKK metnini onaylayınız.');
             return;
         }
-    
-        // Yurt seçimi kontrolü
-        if (user.secilen_yurtlar.length === 0) {
+
+        if (selectedYurts.length === 0) {
             alert('Lütfen en az bir yurt seçiniz.');
             return;
         }
-    
+
         try {
-            // Ana kullanıcı verilerini hazırlama
             const userData = {
                 ad: user.ad,
                 soyad: user.soyad,
@@ -196,32 +176,24 @@ const YurtForm = () => {
                 ikinci_cep_telefonu: user.ikinci_cep_telefonu,
                 job_id: id
             };
-    
+
             console.log('API isteği başlıyor:', userData);
             console.log('API URL:', `${API_URL}/api/users`);
-    
-            // Ana kullanıcı kaydını oluştur
-            const userResponse = await axios.post(`${API_URL}/api/users`, userData, {
-                headers: {
-                    'Content-Type': 'application/json'
-                }
-            });
-    
+
+            const userResponse = await axios.post(`${API_URL}/api/users`, userData);
             console.log('Kullanıcı kaydı yanıtı:', userResponse.data);
             const userId = userResponse.data.user_id;
-    
-            // Seçilen yurtları kaydet
+
             await axios.post(`${API_URL}/api/secilen-yurtlar`, {
-                secilenYurtlar: user.secilen_yurtlar,
+                secilenYurtlar: selectedYurts,
                 userId: userId
             });
-    
-            // Fotoğraf yükleme işlemi
+
             if (user.photo) {
                 const photoFormData = new FormData();
                 photoFormData.append('photo', user.photo);
                 photoFormData.append('userId', userId);
-    
+
                 await axios.post(`${API_URL}/api/upload-photo`, photoFormData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -229,8 +201,7 @@ const YurtForm = () => {
                 });
                 console.log('Fotoğraf yüklendi');
             }
-    
-            // CV yükleme işlemi
+
             if (user.cv) {
                 const formData = new FormData();
                 formData.append('cv', user.cv);
@@ -244,55 +215,47 @@ const YurtForm = () => {
                 });
                 console.log('CV yükleme yanıtı:', response);
             }
-    
-            // Başvuru kaydı oluşturma
+
             const basvuruResponse = await axios.post(`${API_URL}/api/basvurular`, {
                 userId: userId,
                 ilanId: id,
                 ilantype: "yurt"
             });
-    
+
             if (!basvuruResponse.data.id) {
                 throw new Error('Başvuru kaydedilemedi');
             }
-    
-            // Eğitim bilgilerini gönderme
+
             await axios.post(`${API_URL}/api/egitim`, {
                 egitimBilgileri: user.egitim,
                 userId: userId
             });
-    
-            // İş deneyimi bilgilerini gönderme
+
             await axios.post(`${API_URL}/api/is_deneyimi`, {
                 isDeneyimiBilgileri: user.is_deneyimi,
                 userId: userId
             });
-    
-            // Sertifika bilgilerini gönderme
+
             await axios.post(`${API_URL}/api/sertifika`, {
                 sertifikaBilgileri: user.sertifika,
                 userId: userId
             });
-    
-            // Yabancı dil bilgilerini gönderme
+
             await axios.post(`${API_URL}/api/yabanci_dil`, {
                 yabanciDilBilgileri: user.yabanci_dil,
                 userId: userId
             });
-    
-            // Referans bilgilerini gönderme
+
             await axios.post(`${API_URL}/api/referanslar`, {
                 referansBilgileri: user.referans,
                 userId: userId
             });
-    
-            // İlgi alanları bilgilerini gönderme
+
             await axios.post(`${API_URL}/api/ilgi_alanlari`, {
                 ilgiAlanlari: user.ilgi_alanlari,
                 userId: userId
             });
-    
-            // Form başarıyla gönderildikten sonra state'i sıfırla
+
             setUser({
                 ad: '',
                 soyad: '',
@@ -307,7 +270,6 @@ const YurtForm = () => {
                 cep_telefonu: '',
                 job_id: '',
                 ikinci_cep_telefonu: '',
-                secilen_yurtlar: [],
                 egitim: [{ okul_adi: '', bolum: '', baslangic_tarihi: '', bitis_tarihi: '' }],
                 sertifika: [{ sertifika_adi: '', alindi_tarihi: '' }],
                 is_deneyimi: [{ firma_adi: '', pozisyon: '', baslangic_tarihi: '', bitis_tarihi: '' }],
@@ -317,18 +279,16 @@ const YurtForm = () => {
                 cv: null,
                 photo: null
             });
-    
-            // Fotoğraf önizlemeyi temizle
+
+            setSelectedYurts([]);
             setPhotoPreview(null);
             
-            // Başarılı sayfasına yönlendir
             navigate('/success');
-    
+
         } catch (error) {
             console.error('Hata:', error);
             console.error('Hata detayları:', error.response?.data || error.message);
             
-            // Kullanıcıya hata mesajı göster
             alert('Form gönderilirken bir hata oluştu: ' + (error.response?.data?.error || error.message));
             setShowErrorPopup(true);
         }
@@ -338,351 +298,336 @@ const YurtForm = () => {
         setShowErrorPopup(false);
     };
 
-    return (
-        <div>
-            <Header />
-            <div className='MerkezFormRadio'>
-                <div className='ilan-detayları'>
-                    <div className='ilanDetaylarıRadio'>
-                        {loading && ""}
-                        {error && <p style={{ color: 'red' }}>{error}</p>}
-                        {yurtIlanlar && (
-                            <div className="ilan-detay">
-                                <div className='ilanDetayPosition'>
-                                    <div className='backİcon'>
-                                        <Link to="/"><FiArrowLeft /></Link>
-                                        <p className='ilanTitle'>Pozisyon Başlığı: <span>{yurtIlanlar.ilan_basligi}</span></p>
-                                    </div>
-                                    <div className='ilan-descs-banner'>
-                                        <p className='ilanŞirketAdı'>Kurum Adı: <br /> <span>{yurtIlanlar.firma_adi}</span></p>
-                                        <p className='İlanÇalışmaTürü'>Çalışma Türü: <br /> <span>{yurtIlanlar.is_tipi}</span></p>
-                                        <p className='İlanTarih'>Son Başvuru: <br /> <span>{new Date(yurtIlanlar.ilan_tarihi).toLocaleDateString()}</span></p>
-                                        <p className='İlanNo'>İlan Numarası: <br /><span>{yurtIlanlar.job_id}</span></p>
-                                    </div>
-                                </div>
-                                <div className='ilanDetayDesc'>
-                                    <p className='İlanDetay'><span>Pozisyon Detayları:</span> <br /> {yurtIlanlar.detaylar}</p>
-                                </div>
-                            </div>
-                        )}
-                    </div>
-                    <img className='ilan-desc-logo' src="https://www.onder.org.tr/build/assets/search-bg-842c8fc7.svg" alt="Onder Logo" />
-                </div>
-                <form onSubmit={handleSubmit}>
-                    <div className='formUsersSetion'>
-                        <div className='formPhoto'>
-                            <div className="photo-upload-container">
-                                <div className="photo-upload-preview">
-                                    {photoPreview ? (
-                                        <img src={photoPreview} alt="Önizleme" className="photo-preview" />
-                                    ) : (
-                                        <div className="photo-placeholder">
-                                            Fotoğraf Yükleyin
-                                        </div>
-                                    )}
-                                </div>
-                                <label htmlFor="photo-upload" className="photo-upload-label">
-                                    Fotoğraf Seç
-                                    <input
-                                        id="photo-upload"
-                                        type="file"
-                                        accept="image/*"
-                                        onChange={handlePhotoChange}
-                                        className="photo-input"
-                                    />
-                                </label>
-                            </div>
-                        </div>
-                        <div className='formUserOneSection'>
-                            <div className='formNameSurname'>
-                                <label>Adınızı Giriniz: </label>
-                                <input name="ad" placeholder="Ad" value={user.ad} onChange={handleChange} required />
-                            </div>
-                            <div className='formNameSurname'>
-                                <label>Soyadınızı Giriniz: </label>
-                                <input name="soyad" placeholder="Soyad" value={user.soyad} onChange={handleChange} required />
-                            </div>
-                        </div>
-                        <div className='formNameSurnameMail'>
-                            <label>Mail Adresinizi Giriniz: </label>
-                            <input
-                                type="email"
-                                name="email"
-                                placeholder="E-posta Adresi"
-                                value={user.email}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-                        <div className='formCinsiyetDogum'>
-                            <div className='FCD'>
-                                <label>Cinsiyetiniz Nedir: </label>
-                                <select
-                                    name="cinsiyet"
-                                    placeholder="Cinsiyet"
-                                    value={user.cinsiyet}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <option value="">Cinsiyet Seçiniz</option>
-                                    <option value="Erkek">Erkek</option>
-                                    <option value="Kadın">Kadın</option>
-                                </select>
-                            </div>
-                            <div className='FCD'>
-                                <label>Doğum Tarihi: </label>
-                                <input
-                                    name="dogum_tarihi"
-                                    placeholder="Doğum Tarihi"
-                                    type="date"
-                                    value={user.dogum_tarihi}
-                                    onChange={handleChange}
-                                    required
-                                />
-                            </div>
-                        </div>
-    
-                        {/* Yurt Seçim Alanı */}
-                        <div className='FormAdress'>
-                            <label className="yurt-selection-label">Başvurmak İstediğiniz Yurtlar:</label>
-                            <div className="yurt-search">
-                                <input
-                                    type="text"
-                                    placeholder="Yurt ara..."
-                                    value={searchTerm}
-                                    onChange={(e) => setSearchTerm(e.target.value)}
-                                    className="yurt-search-input"
-                                />
-                            </div>
-                            <div className="yurt-selection-container">
-                                {[
-                                    "ANKARA ERKEK ÖĞRENCİ YURDU",
-                                    "AYDIN ERKEK ÖĞRENCİ YURDU",
-                                    "AYDIN KIZ ÖĞRENCİ YURDU",
-                                    "BOLU ERKEK ÖĞRENCİ YURDU",
-                                    "BURSA KAMP, EĞİTİM ve KONAKLAMA MERKEZİ",
-                                    "İSTANBUL BAĞCILAR ERKEK ÖĞRENCİ YURDU",
-                                    "İSTANBUL BEŞİKTAŞ KIZ ÖĞRENCİ PANSİYONU",
-                                    "İSTANBUL BÜYÜKÇEKMECE KAMP, EĞİTİM ve KONAKLAMA MERKEZİ",
-                                    "İSTANBUL CEVİZLİBAĞ KIZ ÖĞRENCİ PANSİYONU",
-                                    "İSTANBUL ÇENGELKÖY KIZ ÖĞRENCİ YURDU",
-                                    "İSTANBUL EYÜP ERKEK ÖĞRENCİ YURDU",
-                                    "İSTANBUL KÜÇÜKÇEKMECE KIZ ÖĞRENCİ YURDU",
-                                    "İZMİR ERKEK ÖĞRENCİ YURDU",
-                                    "KAYSERİ KIZ ÖĞRENCİ YURDU",
-                                    "KONYA ERKEK ÖĞRENCİ YURDU",
-                                    "ŞANLIURFA KIZ ÖĞRENCİ YURDU",
-                                    "YALOVA KIZ ÖĞRENCİ YURDU",
-                                    "ZONGULDAK ERKEK ÖĞRENCİ YURDU"
-                                ].filter(yurt =>
-                                    yurt.toLowerCase().includes(searchTerm.toLowerCase())
-                                ).map((yurt, index) => (
-                                    <div key={index} className="yurt-checkbox-item">
-                                        <input
-                                            type="checkbox"
-                                            id={`yurt-${index}`}
-                                            checked={user.secilen_yurtlar?.includes(yurt)}
-                                            onChange={() => handleYurtChange(yurt)}
-                                            className="yurt-checkbox"
-                                        />
-                                        <label
-                                            htmlFor={`yurt-${index}`}
-                                            className="yurt-checkbox-label"
-                                        >
-                                            {yurt}
-                                        </label>
-                                    </div>
-                                ))}
-                            </div>
-                            <div className="selected-count">
-                                Seçilen Yurt Sayısı: {user.secilen_yurtlar?.length || 0}
-                            </div>
-                        </div>
-    
-                        <div className='FormAdress'>
-                            <label>Ev Adresi:</label>
-                            <input
-                                className='formAdress'
-                                name="ev_adresi"
-                                placeholder="Ev Adresi"
-                                value={user.ev_adresi}
-                                onChange={handleChange}
-                                required
-                            />
-                        </div>
-    
-                        <div>
-                            <div className='formTel'>
-                                <div className='FTForm'>
-                                    <label>Cep Telefon Numaranızı Giriniz:</label>
-                                    <input
-                                        name="cep_telefonu"
-                                        placeholder="Cep Telefonu"
-                                        value={user.cep_telefonu}
-                                        onChange={handleChange}
-                                        required
-                                    />
-                                </div>
-                                <div className='FTForm'>
-                                    <label>Yedek Numara Giriniz:</label>
-                                    <input
-                                        name="ikinci_cep_telefonu"
-                                        placeholder="İkinci Cep Telefonu"
-                                        value={user.ikinci_cep_telefonu}
-                                        onChange={handleChange}
-                                    />
-                                </div>
-                            </div>
-                        </div>
-    
-                        <div className='MMASForm'>
-                            <div className='MMForm'>
-                                <label>Mezuniyet Durumu:</label>
-                                <select
-                                    name="mezuniyet"
-                                    placeholder="Mezuniyet"
-                                    value={user.mezuniyet}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <option value="">Mezuniyet Durumunuz</option>
-                                    <option value="İlkokul">İlkokul</option>
-                                    <option value="Ortaokul">Ortaokul</option>
-                                    <option value="Lise">Lise</option>
-                                    <option value="üniversite">Üniversite</option>
-                                </select>
-                            </div>
-                            <div className='MMForm'>
-                                <label>Medeni Hâl:</label>
-                                <select
-                                    name="medeni_durum"
-                                    placeholder="Medeni Durum"
-                                    value={user.medeni_durum}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <option value="">Medeni Durumu Seçiniz</option>
-                                    <option value="Evli">Evli</option>
-                                    <option value="Bekâr">Bekâr</option>
-                                </select>
-                            </div>
-                        </div>
-    
-                        <div className='ASForm'>
-                            <div className='ASFormTekil'>
-                                <label>Askerlik Durumu:</label>
-                                <select
-                                    name="askerlik_durumu"
-                                    value={user.askerlik_durumu}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <option value="">Askerlik Durumu Seçiniz</option>
-                                    <option value="Yapıldı">Yapıldı</option>
-                                    <option value="Muaf">Muaf</option>
-                                    <option value="Tecilli">Tecilli</option>
-                                    <option value="Yapılmadı">Yapılmadı</option>
-                                </select>
-                            </div>
-    
-                            <div className='ASFormTekil'>
-                                <label>Sürücü Belgesi:</label>
-                                <select
-                                    name="surucu_belgesi"
-                                    placeholder="Sürücü Belgesi"
-                                    value={user.surucu_belgesi}
-                                    onChange={handleChange}
-                                    required
-                                >
-                                    <option value="">Sürücü Belgesi</option>
-                                    <option value="A Sınıfı">A Sınıfı</option>
-                                    <option value="B Sınıfı">B Sınıfı</option>
-                                    <option value="C Sınıfı">C Sınıfı</option>
-                                    <option value="D Sınıfı">D Sınıfı</option>
-                                </select>
-                            </div>
-                        </div>
-    
-                        <h3 className='TTitle'>Eğitim Bilgileri</h3>
-                        {user.egitim.map((item, index) => (
-                            <div key={index}>
-                                <input
-                                    name="okul_adi"
-                                    placeholder="Okul Adı"
-                                    value={item.okul_adi}
-                                    onChange={(e) => handleArrayChange(e, index, 'egitim')}
-                                    required
-                                />
-                                <input
-                                    name="bolum"
-                                    placeholder="Bölüm"
-                                    value={item.bolum}
-                                    onChange={(e) => handleArrayChange(e, index, 'egitim')}
-                                    required
-                                />
-                                <input
-                                    name="baslangic_tarihi"
-                                    placeholder="Başlangıç Tarihi"
-                                    type="date"
-                                    value={item.baslangic_tarihi}
-                                    onChange={(e) => handleArrayChange(e, index, 'egitim')}
-                                    required
-                                />
-                                <input
-                                    name="bitis_tarihi"
-                                    placeholder="Bitiş Tarihi"
-                                    type="date"
-                                    value={item.bitis_tarihi}
-                                    onChange={(e) => handleArrayChange(e, index, 'egitim')}
-                                    required
-                                />
-                            </div>
-                        ))}
-                        <button className='TButton' type="button" onClick={() => addToArray('egitim')}>
-                            Eğitim Bilgisi Ekle
-                        </button>
-    
-                        <h3 className='TTitle'>İş Deneyimi Bilgileri</h3>
-                        {user.is_deneyimi.map((item, index) => (
-                            <div key={index}>
-                                <input
-                                    name="firma_adi"
-                                    placeholder="Firma Adı"
-                                    value={item.firma_adi}
-                                    onChange={(e) => handleArrayChange(e, index, 'is_deneyimi')}
-                                    required
-                                />
-                                <input
-                                    name="pozisyon"
-                                    placeholder="Pozisyon"
-                                    value={item.pozisyon}
-                                    onChange={(e) => handleArrayChange(e, index, 'is_deneyimi')}
-                                    required
-                                />
-                                <input
-                                    name="baslangic_tarihi"
-                                    placeholder="Başlangıç Tarihi"
-                                    type="date"
-                                    value={item.baslangic_tarihi}
-                                    onChange={(e) => handleArrayChange(e, index, 'is_deneyimi')}
-                                    required
-                                /> 
-                                // İş deneyimi devamı...
-                           <input
-                               name="bitis_tarihi"
-                               placeholder="Bitiş Tarihi"
-                               type="date"
-                               value={item.bitis_tarihi}
-                               onChange={(e) => handleArrayChange(e, index, 'is_deneyimi')}
-                               required
-                           />
-                       </div>
-                   ))}
-                   <button className='TButton' type="button" onClick={() => addToArray('is_deneyimi')}>
-                       İş Deneyimi Ekle
-                   </button>
+    // ... önceki koddan devam
 
-                   <h3 className='TTitle'>Sertifika Bilgileri</h3>
+return (
+    <div>
+        <Header />
+        <div className='MerkezFormRadio'>
+            <div className='ilan-detayları'>
+                <div className='ilanDetaylarıRadio'>
+                    {loading && ""}
+                    {error && <p style={{ color: 'red' }}>{error}</p>}
+                    {yurtIlanlar && (
+                        <div className="ilan-detay">
+                            <div className='ilanDetayPosition'>
+                                <div className='backİcon'>
+                                    <Link to="/"><FiArrowLeft /></Link>
+                                    <p className='ilanTitle'>Pozisyon Başlığı: <span>{yurtIlanlar.ilan_basligi}</span></p>
+                                </div>
+                                <div className='ilan-descs-banner'>
+                                    <p className='ilanŞirketAdı'>Kurum Adı: <br /> <span>{yurtIlanlar.firma_adi}</span></p>
+                                    <p className='İlanÇalışmaTürü'>Çalışma Türü: <br /> <span>{yurtIlanlar.is_tipi}</span></p>
+                                    <p className='İlanTarih'>Son Başvuru: <br /> <span>{new Date(yurtIlanlar.ilan_tarihi).toLocaleDateString()}</span></p>
+                                    <p className='İlanNo'>İlan Numarası: <br /><span>{yurtIlanlar.job_id}</span></p>
+                                </div>
+                            </div>
+                            <div className='ilanDetayDesc'>
+                                <p className='İlanDetay'><span>Pozisyon Detayları:</span> <br /> {yurtIlanlar.detaylar}</p>
+                            </div>
+                        </div>
+                    )}
+                </div>
+                <img className='ilan-desc-logo' src="https://www.onder.org.tr/build/assets/search-bg-842c8fc7.svg" alt="Onder Logo" />
+            </div>
+
+            <form onSubmit={handleSubmit}>
+                <div className='formUsersSetion'>
+                    <div className='formPhoto'>
+                        <div className="photo-upload-container">
+                            <div className="photo-upload-preview">
+                                {photoPreview ? (
+                                    <img src={photoPreview} alt="Önizleme" className="photo-preview" />
+                                ) : (
+                                    <div className="photo-placeholder">
+                                        Fotoğraf Yükleyin
+                                    </div>
+                                )}
+                            </div>
+                            <label htmlFor="photo-upload" className="photo-upload-label">
+                                Fotoğraf Seç
+                                <input
+                                    id="photo-upload"
+                                    type="file"
+                                    accept="image/*"
+                                    onChange={handlePhotoChange}
+                                    className="photo-input"
+                                />
+                            </label>
+                        </div>
+                    </div>
+
+                    <div className='formUserOneSection'>
+                        <div className='formNameSurname'>
+                            <label>Adınızı Giriniz: </label>
+                            <input name="ad" placeholder="Ad" value={user.ad} onChange={handleChange} required />
+                        </div>
+                        <div className='formNameSurname'>
+                            <label>Soyadınızı Giriniz: </label>
+                            <input name="soyad" placeholder="Soyad" value={user.soyad} onChange={handleChange} required />
+                        </div>
+                    </div>
+
+                    <div className='formNameSurnameMail'>
+                        <label>Mail Adresinizi Giriniz: </label>
+                        <input
+                            type="email"
+                            name="email"
+                            placeholder="E-posta Adresi"
+                            value={user.email}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className='formCinsiyetDogum'>
+                        <div className='FCD'>
+                            <label>Cinsiyetiniz Nedir: </label>
+                            <select
+                                name="cinsiyet"
+                                value={user.cinsiyet}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Cinsiyet Seçiniz</option>
+                                <option value="Erkek">Erkek</option>
+                                <option value="Kadın">Kadın</option>
+                            </select>
+                        </div>
+                        <div className='FCD'>
+                            <label>Doğum Tarihi: </label>
+                            <input
+                                name="dogum_tarihi"
+                                type="date"
+                                value={user.dogum_tarihi}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                    </div>
+
+                    {/* Yurt Seçim Alanı */}
+                    <div className='FormAdress'>
+                        <label className="yurt-selection-label">Başvurmak İstediğiniz Yurtlar:</label>
+                        <div className="yurt-selection-container">
+                            {[
+                                "ANKARA ERKEK ÖĞRENCİ YURDU",
+                                "AYDIN ERKEK ÖĞRENCİ YURDU",
+                                "AYDIN KIZ ÖĞRENCİ YURDU",
+                                "BOLU ERKEK ÖĞRENCİ YURDU",
+                                "BURSA KAMP, EĞİTİM ve KONAKLAMA MERKEZİ",
+                                "İSTANBUL BAĞCILAR ERKEK ÖĞRENCİ YURDU",
+                                "İSTANBUL BEŞİKTAŞ KIZ ÖĞRENCİ PANSİYONU",
+                                "İSTANBUL BÜYÜKÇEKMECE KAMP, EĞİTİM ve KONAKLAMA MERKEZİ",
+                                "İSTANBUL CEVİZLİBAĞ KIZ ÖĞRENCİ PANSİYONU",
+                                "İSTANBUL ÇENGELKÖY KIZ ÖĞRENCİ YURDU",
+                                "İSTANBUL EYÜP ERKEK ÖĞRENCİ YURDU",
+                                "İSTANBUL KÜÇÜKÇEKMECE KIZ ÖĞRENCİ YURDU",
+                                "İZMİR ERKEK ÖĞRENCİ YURDU",
+                                "KAYSERİ KIZ ÖĞRENCİ YURDU",
+                                "KONYA ERKEK ÖĞRENCİ YURDU",
+                                "ŞANLIURFA KIZ ÖĞRENCİ YURDU",
+                                "YALOVA KIZ ÖĞRENCİ YURDU",
+                                "ZONGULDAK ERKEK ÖĞRENCİ YURDU"
+                            ].map((yurt, index) => (
+                                <div key={index} className="yurt-checkbox-item">
+                                    <input
+                                        type="checkbox"
+                                        id={`yurt-${index}`}
+                                        checked={selectedYurts.includes(yurt)}
+                                        onChange={() => {
+                                            setSelectedYurts(prev =>
+                                                prev.includes(yurt)
+                                                    ? prev.filter(y => y !== yurt)
+                                                    : [...prev, yurt]
+                                            );
+                                        }}
+                                        className="yurt-checkbox"
+                                    />
+                                    <label htmlFor={`yurt-${index}`} className="yurt-checkbox-label">
+                                        {yurt}
+                                    </label>
+                                </div>
+                            ))}
+                        </div>
+                        <div className="selected-count">
+                            Seçilen Yurt Sayısı: {selectedYurts.length}
+                        </div>
+                    </div>
+
+                    <div className='FormAdress'>
+                        <label>Ev Adresi:</label>
+                        <input
+                            className='formAdress'
+                            name="ev_adresi"
+                            placeholder="Ev Adresi"
+                            value={user.ev_adresi}
+                            onChange={handleChange}
+                            required
+                        />
+                    </div>
+
+                    <div className='formTel'>
+                        <div className='FTForm'>
+                            <label>Cep Telefon Numaranızı Giriniz:</label>
+                            <input
+                                name="cep_telefonu"
+                                placeholder="Cep Telefonu"
+                                value={user.cep_telefonu}
+                                onChange={handleChange}
+                                required
+                            />
+                        </div>
+                        <div className='FTForm'>
+                            <label>Yedek Numara Giriniz:</label>
+                            <input
+                                name="ikinci_cep_telefonu"
+                                placeholder="İkinci Cep Telefonu"
+                                value={user.ikinci_cep_telefonu}
+                                onChange={handleChange}
+                            />
+                        </div>
+                    </div>
+
+                    <div className='MMASForm'>
+                        <div className='MMForm'>
+                            <label>Mezuniyet Durumu:</label>
+                            <select
+                                name="mezuniyet"
+                                value={user.mezuniyet}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Mezuniyet Durumunuz</option>
+                                <option value="İlkokul">İlkokul</option>
+                                <option value="Ortaokul">Ortaokul</option>
+                                <option value="Lise">Lise</option>
+                                <option value="üniversite">Üniversite</option>
+                            </select>
+                        </div>
+                        <div className='MMForm'>
+                            <label>Medeni Hâl:</label>
+                            <select
+                                name="medeni_durum"
+                                value={user.medeni_durum}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Medeni Durumu Seçiniz</option>
+                                <option value="Evli">Evli</option>
+                                <option value="Bekâr">Bekâr</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div className='ASForm'>
+                        <div className='ASFormTekil'>
+                            <label>Askerlik Durumu:</label>
+                            <select
+                                name="askerlik_durumu"
+                                value={user.askerlik_durumu}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Askerlik Durumu Seçiniz</option>
+                                <option value="Yapıldı">Yapıldı</option>
+                                <option value="Muaf">Muaf</option>
+                                <option value="Tecilli">Tecilli</option>
+                                <option value="Yapılmadı">Yapılmadı</option>
+                            </select>
+                        </div>
+                        <div className='ASFormTekil'>
+                            <label>Sürücü Belgesi:</label>
+                            <select
+                                name="surucu_belgesi"
+                                value={user.surucu_belgesi}
+                                onChange={handleChange}
+                                required
+                            >
+                                <option value="">Sürücü Belgesi</option>
+                                <option value="A Sınıfı">A Sınıfı</option>
+                                <option value="B Sınıfı">B Sınıfı</option>
+                                <option value="C Sınıfı">C Sınıfı</option>
+                                <option value="D Sınıfı">D Sınıfı</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <h3 className='TTitle'>Eğitim Bilgileri</h3>
+                    {user.egitim.map((item, index) => (
+                        <div key={index}>
+                            <input
+                                name="okul_adi"
+                                placeholder="Okul Adı"
+                                value={item.okul_adi}
+                                onChange={(e) => handleArrayChange(e, index, 'egitim')}
+                                required
+                            />
+                            <input
+                                name="bolum"
+                                placeholder="Bölüm"
+                                value={item.bolum}
+                                onChange={(e) => handleArrayChange(e, index, 'egitim')}
+                                required
+                            />
+                            <input
+                                name="baslangic_tarihi"
+                                type="date"
+                                value={item.baslangic_tarihi}
+                                onChange={(e) => handleArrayChange(e, index, 'egitim')}
+                                required
+                            />
+                            <input
+                                name="bitis_tarihi"
+                                type="date"
+                                value={item.bitis_tarihi}
+                                onChange={(e) => handleArrayChange(e, index, 'egitim')}
+                                required
+                            />
+                        </div>
+                    ))}
+                    <button className='TButton' type="button" onClick={() => addToArray('egitim')}>
+                        Eğitim Bilgisi Ekle
+                    </button>
+
+                    <h3 className='TTitle'>İş Deneyimi Bilgileri</h3>
+                    {user.is_deneyimi.map((item, index) => (
+                        <div key={index}>
+                            <input
+                                name="firma_adi"
+                                placeholder="Firma Adı"
+                                value={item.firma_adi}
+                                onChange={(e) => handleArrayChange(e, index, 'is_deneyimi')}
+                                required
+                            />
+                            <input
+                                name="pozisyon"
+                                placeholder="Pozisyon"
+                                value={item.pozisyon}
+                                onChange={(e) => handleArrayChange(e, index, 'is_deneyimi')}
+                                required
+                            />
+                            <input
+                                name="baslangic_tarihi"
+                                type="date"
+                                value={item.baslangic_tarihi}
+                                onChange={(e) => handleArrayChange(e, index, 'is_deneyimi')}
+                                required
+                            />
+                            <input
+                                name="bitis_tarihi"
+                                type="date"
+                                value={item.bitis_tarihi}
+                                onChange={(e) => handleArrayChange(e, index, 'is_deneyimi')}
+                                required
+                            />
+                        </div>
+                    ))}
+                    <button className='TButton' type="button" onClick={() => addToArray('is_deneyimi')}>
+                        İş Deneyimi Ekle
+                    </button>
+
+                    <h3 className='TTitle'>Sertifika Bilgileri</h3>
                    {user.sertifika.map((item, index) => (
                        <div key={index}>
                            <input
@@ -694,7 +639,6 @@ const YurtForm = () => {
                            />
                            <input
                                name="alindi_tarihi"
-                               placeholder="Alındığı Tarih"
                                type="date"
                                value={item.alindi_tarihi}
                                onChange={(e) => handleArrayChange(e, index, 'sertifika')}
@@ -801,12 +745,12 @@ const YurtForm = () => {
                            </span>
                        </label>
                    </div>
-
                </div>
 
                <button className='SubmitButton' type="submit">Formu Gönder</button>
            </form>
        </div>
+
        {showErrorPopup && (
            <div className="error-popup">
                <div className="error-popup-content">
