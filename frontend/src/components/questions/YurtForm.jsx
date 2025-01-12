@@ -169,13 +169,14 @@ const YurtForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
     
+        // KVKK kontrolü
         if (!kvkkConsent) {
             alert('Lütfen KVKK metnini onaylayınız.');
             return;
         }
     
         try {
-    
+            // Ana kullanıcı verilerini hazırlama
             const userData = {
                 ad: user.ad,
                 soyad: user.soyad,
@@ -195,13 +196,19 @@ const YurtForm = () => {
     
             console.log('API isteği başlıyor:', userData);
             console.log('API URL:', `${API_URL}/api/users`);
-            console.log('Sending secilen_yurtlar:', userData.secilen_yurtlar);
-            const userResponse = await axios.post(`${API_URL}/api/users`, userData);
+            console.log('Gönderilen secilen_yurtlar:', userData.secilen_yurtlar);
+    
+            // Ana kullanıcı verilerini gönderme
+            const userResponse = await axios.post(`${API_URL}/api/users`, userData, {
+                headers: {
+                    'Content-Type': 'application/json'
+                }
+            });
+    
             console.log('API yanıtı:', userResponse.data);
             const userId = userResponse.data.user_id;
     
-    
-            // Fotoğraf yükleme
+            // Fotoğraf yükleme işlemi
             if (user.photo) {
                 const photoFormData = new FormData();
                 photoFormData.append('photo', user.photo);
@@ -212,15 +219,16 @@ const YurtForm = () => {
                         'Content-Type': 'multipart/form-data'
                     }
                 });
+                console.log('Fotoğraf yüklendi');
             }
     
-            // CV yükleme
+            // CV yükleme işlemi
             if (user.cv) {
                 const formData = new FormData();
                 formData.append('cv', user.cv);
                 formData.append('userId', userId);
+                
                 console.log('CV yükleme isteği gönderiliyor');
-                console.log('formData:', formData);
                 const response = await axios.post(`${API_URL}/api/upload-cv`, formData, {
                     headers: {
                         'Content-Type': 'multipart/form-data'
@@ -229,7 +237,7 @@ const YurtForm = () => {
                 console.log('CV yükleme yanıtı:', response);
             }
     
-            // Başvuru kaydı
+            // Başvuru kaydı oluşturma
             const basvuruResponse = await axios.post(`${API_URL}/api/basvurular`, {
                 userId: userId,
                 ilanId: id,
@@ -240,32 +248,37 @@ const YurtForm = () => {
                 throw new Error('Başvuru kaydedilemedi');
             }
     
-            // Diğer bilgileri gönder
+            // Eğitim bilgilerini gönderme
             await axios.post(`${API_URL}/api/egitim`, {
                 egitimBilgileri: user.egitim,
                 userId: userId
             });
     
+            // İş deneyimi bilgilerini gönderme
             await axios.post(`${API_URL}/api/is_deneyimi`, {
                 isDeneyimiBilgileri: user.is_deneyimi,
                 userId: userId
             });
     
+            // Sertifika bilgilerini gönderme
             await axios.post(`${API_URL}/api/sertifika`, {
                 sertifikaBilgileri: user.sertifika,
                 userId: userId
             });
     
+            // Yabancı dil bilgilerini gönderme
             await axios.post(`${API_URL}/api/yabanci_dil`, {
                 yabanciDilBilgileri: user.yabanci_dil,
                 userId: userId
             });
     
+            // Referans bilgilerini gönderme
             await axios.post(`${API_URL}/api/referanslar`, {
                 referansBilgileri: user.referans,
                 userId: userId
             });
     
+            // İlgi alanları bilgilerini gönderme
             await axios.post(`${API_URL}/api/ilgi_alanlari`, {
                 ilgiAlanlari: user.ilgi_alanlari,
                 userId: userId
@@ -296,12 +309,19 @@ const YurtForm = () => {
                 cv: null,
                 photo: null
             });
+    
+            // Fotoğraf önizlemeyi temizle
             setPhotoPreview(null);
+            
+            // Başarılı sayfasına yönlendir
             navigate('/success');
     
         } catch (error) {
             console.error('Hata:', error);
-            alert('Form gönderilirken bir hata oluştu: ' + error.message);
+            console.error('Hata detayları:', error.response?.data || error.message);
+            
+            // Kullanıcıya hata mesajı göster
+            alert('Form gönderilirken bir hata oluştu: ' + (error.response?.data?.error || error.message));
             setShowErrorPopup(true);
         }
     };

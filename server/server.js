@@ -50,6 +50,8 @@ app.get('/api/egitim/:user_id', (req, res) => {
 
 app.post('/api/users', (req, res) => {
     console.log('=== USERS POST İSTEĞİ BAŞLADI ===');
+    console.log('Gelen veri:', req.body);
+
     const {
         ad,
         soyad,
@@ -67,14 +69,26 @@ app.post('/api/users', (req, res) => {
         job_id
     } = req.body;
 
-        const yurtlarDegeri = secilen_yurtlar ? 
-        (typeof secilen_yurtlar === 'string' ? secilen_yurtlar : JSON.stringify(secilen_yurtlar)) : 
-        '[]';
+    // secilen_yurtlar'ı işleme
+    let yurtlarDegeri;
+    try {
+        if (typeof secilen_yurtlar === 'string') {
+            // Eğer string ise ve JSON formatında ise parse et
+            const parsed = JSON.parse(secilen_yurtlar);
+            yurtlarDegeri = JSON.stringify(parsed);
+        } else if (Array.isArray(secilen_yurtlar)) {
+            // Eğer array ise direkt stringify yap
+            yurtlarDegeri = JSON.stringify(secilen_yurtlar);
+        } else {
+            // Hiçbiri değilse boş array kullan
+            yurtlarDegeri = '[]';
+        }
+    } catch (error) {
+        console.error('Yurt verisi parse hatası:', error);
+        yurtlarDegeri = '[]';
+    }
 
-    console.log('Kaydedilecek yurt değeri:', yurtlarDegeri);
-    console.log('Yurt değerinin tipi:', typeof yurtlarDegeri);
-    console.log('Received secilen_yurtlar:', req.body.secilen_yurtlar);
-    console.log('Processed yurtlarDegeri:', yurtlarDegeri);
+    console.log('İşlenmiş yurt verisi:', yurtlarDegeri);
 
     const query = `
         INSERT INTO users 
@@ -90,10 +104,19 @@ app.post('/api/users', (req, res) => {
         yurtlarDegeri, job_id
     ];
 
+    // Her bir değeri kontrol et
+    values.forEach((value, index) => {
+        console.log(`Value ${index}:`, value);
+    });
+
     db.query(query, values, (err, results) => {
         if (err) {
-            console.error('HATA:', err);
-            return res.status(500).json({ error: err.message });
+            console.error('Veritabanı hatası:', err);
+            return res.status(500).json({ 
+                error: err.message,
+                sqlMessage: err.sqlMessage,
+                sql: err.sql 
+            });
         }
         console.log('Kayıt başarılı:', results);
         res.status(201).json({
@@ -834,9 +857,6 @@ const storage = multer.diskStorage({
 const upload = multer({ storage: storage });
 
 app.post('/api/upload-cv', upload.single('cv'), async (req, res) => {
-    console.log('CV yükleme isteği alındı');
-    console.log('req.file:', req.file);
-    console.log('req.body:', req.body);
 
     if (!req.file) {
         console.log('Dosya yüklenmedi');
@@ -844,7 +864,6 @@ app.post('/api/upload-cv', upload.single('cv'), async (req, res) => {
     }
 
     const { userId } = req.body;
-    console.log('userId:', userId);
 
     try {
         const query = 'INSERT INTO cv (user_id, file_path) VALUES (?, ?)';
@@ -1010,9 +1029,7 @@ const photoUpload = multer({
 
 // Fotoğraf yükleme endpoint'i
 app.post('/api/upload-photo', photoUpload.single('photo'), async (req, res) => {
-    console.log('Fotoğraf yükleme isteği alındı');
-    console.log('req.file:', req.file);
-    console.log('req.body:', req.body);
+   
 
     if (!req.file) {
         console.log('Dosya yüklenmedi');
