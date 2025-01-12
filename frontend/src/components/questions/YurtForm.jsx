@@ -357,14 +357,18 @@ const YurtForm = () => {
     );
 
     const handleYurtChange = (yurt) => {
-        setUser(prevState => ({
-            ...prevState,
-            secilen_yurtlar: prevState.secilen_yurtlar.includes(yurt)
+        setUser(prevState => {
+            const newYurtlar = prevState.secilen_yurtlar.includes(yurt)
                 ? prevState.secilen_yurtlar.filter(item => item !== yurt)
-                : [...prevState.secilen_yurtlar, yurt]
-        }));
+                : [...prevState.secilen_yurtlar, yurt];
+            
+            console.log('Seçilen yurtlar:', newYurtlar);
+            return {
+                ...prevState,
+                secilen_yurtlar: newYurtlar
+            };
+        });
     };
-
 
     return (
         <div>
