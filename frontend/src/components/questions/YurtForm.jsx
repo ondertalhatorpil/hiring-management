@@ -169,7 +169,13 @@ const YurtForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
     
-        // KVKK kontrolü
+        // Test için basit bir değer atayalım
+        setUser(prevState => ({
+            ...prevState,
+            secilen_yurtlar: ["test_yurt"]
+        }));
+    
+        // KVKK kontrolü vs...
         if (!kvkkConsent) {
             alert('Lütfen KVKK metnini onaylayınız.');
             return;
@@ -191,7 +197,7 @@ const YurtForm = () => {
                 cep_telefonu: user.cep_telefonu,
                 ikinci_cep_telefonu: user.ikinci_cep_telefonu,
                 job_id: id,
-                secilen_yurtlar: JSON.stringify(user.secilen_yurtlar)
+                secilen_yurtlar: JSON.stringify(["test_yurt"]) // Test için sabit değer
             };
     
             console.log('API isteği başlıyor:', userData);
@@ -356,19 +362,13 @@ const YurtForm = () => {
         yurt.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleYurtChange = (yurt) => {
-        setUser(prevState => {
-            const newYurtlar = prevState.secilen_yurtlar.includes(yurt)
-                ? prevState.secilen_yurtlar.filter(item => item !== yurt)
-                : [...prevState.secilen_yurtlar, yurt];
-            
-            console.log('Seçilen yurtlar:', newYurtlar);
-            return {
-                ...prevState,
-                secilen_yurtlar: newYurtlar
-            };
-        });
-    };
+// Test için handleYurtChange fonksiyonunu basitleştirelim
+const handleYurtChange = () => {
+    setUser(prevState => ({
+        ...prevState,
+        secilen_yurtlar: ["test_yurt"] // Basit bir string dizisi
+    }));
+};
 
     return (
         <div>

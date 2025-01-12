@@ -50,7 +50,9 @@ app.get('/api/egitim/:user_id', (req, res) => {
 
 app.post('/api/users', (req, res) => {
     console.log('=== USERS POST İSTEĞİ BAŞLADI ===');
-    console.log('Gelen veri:', req.body);
+    console.log('Gelen ham veri:', req.body);
+    console.log('secilen_yurtlar tipi:', typeof req.body.secilen_yurtlar);
+    console.log('secilen_yurtlar değeri:', req.body.secilen_yurtlar);
 
     const {
         ad,
