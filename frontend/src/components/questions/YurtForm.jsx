@@ -197,7 +197,7 @@ const YurtForm = () => {
                 cep_telefonu: user.cep_telefonu,
                 ikinci_cep_telefonu: user.ikinci_cep_telefonu,
                 job_id: id,
-                secilen_yurtlar: JSON.stringify(["test_yurt"]) // Test için sabit değer
+                secilen_yurtlar:"test" 
             };
     
             console.log('API isteği başlıyor:', userData);
@@ -305,7 +305,7 @@ const YurtForm = () => {
                 cep_telefonu: '',
                 job_id: '',
                 ikinci_cep_telefonu: '',
-                secilen_yurtlar: [],
+                secilen_yurtlar: "test",
                 egitim: [{ okul_adi: '', bolum: '', baslangic_tarihi: '', bitis_tarihi: '' }],
                 sertifika: [{ sertifika_adi: '', alindi_tarihi: '' }],
                 is_deneyimi: [{ firma_adi: '', pozisyon: '', baslangic_tarihi: '', bitis_tarihi: '' }],
@@ -366,7 +366,7 @@ const YurtForm = () => {
 const handleYurtChange = () => {
     setUser(prevState => ({
         ...prevState,
-        secilen_yurtlar: ["test_yurt"] // Basit bir string dizisi
+        secilen_yurtlar:"test" // Basit bir string dizisi
     }));
 };
 
