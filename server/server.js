@@ -49,83 +49,39 @@ app.get('/api/egitim/:user_id', (req, res) => {
 });
 
 app.post('/api/users', (req, res) => {
-    console.log('=== USERS POST İSTEĞİ BAŞLADI ===');
-    console.log('Gelen ham veri:', req.body);
-    console.log('secilen_yurtlar tipi:', typeof req.body.secilen_yurtlar);
-    console.log('secilen_yurtlar değeri:', req.body.secilen_yurtlar);
-
-    const {
-        ad,
+    const { 
+        ad, 
         soyad,
-        email,
-        cinsiyet,
-        mezuniyet,
+        email, 
+        cinsiyet, 
+        mezuniyet, 
         medeni_durum,
-        askerlik_durumu,
-        surucu_belgesi,
-        dogum_tarihi,
-        ev_adresi,
-        cep_telefonu,
+        askerlik_durumu, 
+        surucu_belgesi, 
+        dogum_tarihi, 
+        ev_adresi, 
+        cep_telefonu, 
         ikinci_cep_telefonu,
-        secilen_yurtlar,
         job_id
     } = req.body;
 
-    // secilen_yurtlar'ı işleme
-    let yurtlarDegeri;
-    try {
-        if (typeof secilen_yurtlar === 'string') {
-            // Eğer string ise ve JSON formatında ise parse et
-            const parsed = JSON.parse(secilen_yurtlar);
-            yurtlarDegeri = JSON.stringify(parsed);
-        } else if (Array.isArray(secilen_yurtlar)) {
-            // Eğer array ise direkt stringify yap
-            yurtlarDegeri = JSON.stringify(secilen_yurtlar);
-        } else {
-            // Hiçbiri değilse boş array kullan
-            yurtlarDegeri = '[]';
-        }
-    } catch (error) {
-        console.error('Yurt verisi parse hatası:', error);
-        yurtlarDegeri = '[]';
-    }
+    // job_id kontrolü ekleyelim
+    const jobIdValue = job_id ? job_id : null;
 
-    console.log('İşlenmiş yurt verisi:', yurtlarDegeri);
-
-    const query = `
-        INSERT INTO users 
-        (ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, 
-        surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, 
-        secilen_yurtlar, job_id) 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    `;
-
-    const values = [
-        ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu,
-        surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu,
-        yurtlarDegeri, job_id
-    ];
-
-    // Her bir değeri kontrol et
-    values.forEach((value, index) => {
-        console.log(`Value ${index}:`, value);
-    });
-
-    db.query(query, values, (err, results) => {
-        if (err) {
-            console.error('Veritabanı hatası:', err);
-            return res.status(500).json({ 
-                error: err.message,
-                sqlMessage: err.sqlMessage,
-                sql: err.sql 
+    db.query(
+        'INSERT INTO users (ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, job_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, jobIdValue],
+        (err, results) => {
+            if (err) {
+                console.error('Kullanıcı kayıt hatası:', err);
+                return res.status(500).json({ error: err.message });
+            }
+            res.status(201).json({ 
+                message: 'Kullanıcı başarıyla kaydedildi',
+                user_id: results.insertId 
             });
         }
-        console.log('Kayıt başarılı:', results);
-        res.status(201).json({
-            message: 'Kullanıcı başarıyla kaydedildi',
-            user_id: results.insertId
-        });
-    });
+    );
 });
 
 
@@ -167,6 +123,58 @@ app.post('/api/egitim', async (req, res) => {
     } catch (error) {
         console.error('Eğitim kayıt hatası:', error);
         res.status(500).json({ error: error.message || 'Eğitim bilgileri kaydedilirken bir hata oluştu' });
+    }
+});
+
+
+
+// Seçilen yurtlar için GET API
+app.get('/api/secilen-yurtlar/:user_id', async (req, res) => {
+    const userId = req.params.user_id;
+    try {
+        const [yurtlar] = await db.promise().query(
+            'SELECT * FROM secilen_yurtlar WHERE user_id = ?',
+            [userId]
+        );
+        res.json(yurtlar);
+    } catch (error) {
+        console.error('Seçilen yurtlar getirme hatası:', error);
+        res.status(500).json({ error: 'Seçilen yurtlar getirilirken bir hata oluştu' });
+    }
+});
+
+// Seçilen yurtlar için POST API
+app.post('/api/secilen-yurtlar', async (req, res) => {
+    const { secilenYurtlar, userId } = req.body;
+
+    if (!userId) {
+        return res.status(400).json({ error: 'User ID gereklidir' });
+    }
+
+    try {
+        // Önce bu kullanıcının eski yurt seçimlerini silelim
+        await db.promise().query(
+            'DELETE FROM secilen_yurtlar WHERE user_id = ?',
+            [userId]
+        );
+
+        // Yeni seçimleri ekleyelim
+        for (const yurt of secilenYurtlar) {
+            await db.promise().query(
+                'INSERT INTO secilen_yurtlar (user_id, yurt_adi) VALUES (?, ?)',
+                [userId, yurt]
+            );
+        }
+
+        res.status(201).json({ 
+            message: 'Seçilen yurtlar başarıyla kaydedildi',
+            userId: userId
+        });
+    } catch (error) {
+        console.error('Seçilen yurtlar kayıt hatası:', error);
+        res.status(500).json({ 
+            error: 'Seçilen yurtlar kaydedilirken bir hata oluştu' 
+        });
     }
 });
 
@@ -524,57 +532,93 @@ app.post('/api/basvurular', (req, res) => {
 
 app.get('/api/basvurular/:ilan_id', async (req, res) => {
     const ilanId = req.params.ilan_id;
-
+ 
     try {
+        // Önce başvuruları bul
         const [basvurular] = await db.promise().query(
             'SELECT user_id FROM basvurular WHERE ilan_id = ?',
             [ilanId]
         );
-
+ 
         if (basvurular.length === 0) {
             return res.status(404).json({ message: 'Bu ilan için başvuru bulunamadı.' });
         }
-
+ 
         const userIds = basvurular.map(basvuru => basvuru.user_id);
-
+ 
         // Tüm tablolardan verileri paralel olarak al
-        const [users, egitimler, ilgiAlanlari, sertifikalar, yabanciDiller, referanslar, isDeneyimleri] = 
-            await Promise.all([
-                db.promise().query('SELECT * FROM users WHERE user_id IN (?)', [userIds]),
-                db.promise().query('SELECT * FROM egitim WHERE user_id IN (?)', [userIds]),
-                db.promise().query('SELECT * FROM ilgi_alanlari WHERE user_id IN (?)', [userIds]),
-                db.promise().query('SELECT * FROM sertifika WHERE user_id IN (?)', [userIds]),
-                db.promise().query('SELECT * FROM yabanci_dil WHERE user_id IN (?)', [userIds]),
-                db.promise().query('SELECT * FROM referanslar WHERE user_id IN (?)', [userIds]),
-                db.promise().query('SELECT * FROM is_deneyimi WHERE user_id IN (?)', [userIds])
-            ]);
-
+        const [
+            users, 
+            egitimler, 
+            secilenYurtlar,
+            ilgiAlanlari, 
+            sertifikalar, 
+            yabanciDiller, 
+            referanslar, 
+            isDeneyimleri,
+            photos,
+            cvler
+        ] = await Promise.all([
+            db.promise().query('SELECT * FROM users WHERE user_id IN (?)', [userIds]),
+            db.promise().query('SELECT * FROM egitim WHERE user_id IN (?)', [userIds]),
+            db.promise().query('SELECT * FROM secilen_yurtlar WHERE user_id IN (?)', [userIds]),
+            db.promise().query('SELECT * FROM ilgi_alanlari WHERE user_id IN (?)', [userIds]),
+            db.promise().query('SELECT * FROM sertifika WHERE user_id IN (?)', [userIds]),
+            db.promise().query('SELECT * FROM yabanci_dil WHERE user_id IN (?)', [userIds]),
+            db.promise().query('SELECT * FROM referanslar WHERE user_id IN (?)', [userIds]),
+            db.promise().query('SELECT * FROM is_deneyimi WHERE user_id IN (?)', [userIds]),
+            db.promise().query('SELECT * FROM user_photos WHERE user_id IN (?)', [userIds]),
+            db.promise().query('SELECT * FROM cv WHERE user_id IN (?)', [userIds])
+        ]);
+ 
         // Her kullanıcı için tüm bilgileri birleştir
         const detayliBasvurular = users[0].map(user => {
             return {
                 ...user,
                 egitim_bilgileri: egitimler[0].filter(egitim => egitim.user_id === user.user_id),
+                secilen_yurtlar: secilenYurtlar[0].filter(yurt => yurt.user_id === user.user_id),
                 ilgi_alanlari: ilgiAlanlari[0].filter(ilgi => ilgi.user_id === user.user_id),
                 sertifikalar: sertifikalar[0].filter(sertifika => sertifika.user_id === user.user_id),
                 yabanci_diller: yabanciDiller[0].filter(dil => dil.user_id === user.user_id),
                 referanslar: referanslar[0].filter(referans => referans.user_id === user.user_id),
-                is_deneyimleri: isDeneyimleri[0].filter(deneyim => deneyim.user_id === user.user_id)
+                is_deneyimleri: isDeneyimleri[0].filter(deneyim => deneyim.user_id === user.user_id),
+                photo: photos[0].find(photo => photo.user_id === user.user_id) || null,
+                cv: cvler[0].find(cv => cv.user_id === user.user_id) || null,
+                basvuru_tarihi: basvurular.find(basvuru => basvuru.user_id === user.user_id)?.basvuru_tarihi
             };
         });
-
-        res.json(detayliBasvurular);
-
+ 
+        // Başvuru tarihine göre sırala (en yeni en üstte)
+        detayliBasvurular.sort((a, b) => 
+            new Date(b.basvuru_tarihi) - new Date(a.basvuru_tarihi)
+        );
+ 
+        // İstatistiksel bilgileri ekle
+        const basvuruIstatistikleri = {
+            toplam_basvuru: detayliBasvurular.length,
+            erkek_basvuru: detayliBasvurular.filter(b => b.cinsiyet === 'Erkek').length,
+            kadin_basvuru: detayliBasvurular.filter(b => b.cinsiyet === 'Kadın').length,
+            ortalama_deneyim: Math.round(detayliBasvurular.reduce((acc, curr) => 
+                acc + curr.is_deneyimleri.length, 0) / detayliBasvurular.length)
+        };
+ 
+        res.json({
+            istatistikler: basvuruIstatistikleri,
+            basvurular: detayliBasvurular
+        });
+ 
     } catch (error) {
         console.error('Veri çekme hatası:', error);
         res.status(500).json({ 
             error: 'Veritabanı hatası',
-            details: error.message 
+            details: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
     }
-});
+ });
 
 
-app.get('/api/tum-basvurular/yurt', async (req, res) => {
+ app.get('/api/tum-basvurular/yurt', async (req, res) => {
     try {
         // Önce tüm yurt ilanlarını al
         const [ilanlar] = await db.promise().query('SELECT * FROM yurt_ilanlar');
@@ -599,44 +643,67 @@ app.get('/api/tum-basvurular/yurt', async (req, res) => {
             const [
                 users,
                 egitimler,
+                secilenYurtlar, // Yeni eklenen
                 ilgiAlanlari,
                 sertifikalar,
                 yabanciDiller,
                 referanslar,
                 isDeneyimleri,
-                photos // Yeni eklenen
+                photos
             ] = await Promise.all([
                 db.promise().query('SELECT * FROM users WHERE user_id IN (?)', [userIds]),
                 db.promise().query('SELECT * FROM egitim WHERE user_id IN (?)', [userIds]),
+                db.promise().query('SELECT * FROM secilen_yurtlar WHERE user_id IN (?)', [userIds]), // Yeni eklenen
                 db.promise().query('SELECT * FROM ilgi_alanlari WHERE user_id IN (?)', [userIds]),
                 db.promise().query('SELECT * FROM sertifika WHERE user_id IN (?)', [userIds]),
                 db.promise().query('SELECT * FROM yabanci_dil WHERE user_id IN (?)', [userIds]),
                 db.promise().query('SELECT * FROM referanslar WHERE user_id IN (?)', [userIds]),
                 db.promise().query('SELECT * FROM is_deneyimi WHERE user_id IN (?)', [userIds]),
-                db.promise().query('SELECT * FROM user_photos WHERE user_id IN (?)', [userIds]) // Yeni eklenen
+                db.promise().query('SELECT * FROM user_photos WHERE user_id IN (?)', [userIds])
             ]);
-    
 
             const detayliBasvuranlar = users[0].map(user => ({
                 ...user,
                 egitim_bilgileri: egitimler[0].filter(egitim => egitim.user_id === user.user_id),
+                secilen_yurtlar: secilenYurtlar[0].filter(yurt => yurt.user_id === user.user_id), // Yeni eklenen
                 ilgi_alanlari: ilgiAlanlari[0].filter(ilgi => ilgi.user_id === user.user_id),
                 sertifikalar: sertifikalar[0].filter(sertifika => sertifika.user_id === user.user_id),
                 yabanci_diller: yabanciDiller[0].filter(dil => dil.user_id === user.user_id),
                 referanslar: referanslar[0].filter(referans => referans.user_id === user.user_id),
                 is_deneyimleri: isDeneyimleri[0].filter(deneyim => deneyim.user_id === user.user_id),
-                photo: photos[0].find(photo => photo.user_id === user.user_id) || null // Yeni eklenen
+                photo: photos[0].find(photo => photo.user_id === user.user_id) || null
             }));
 
+            const ilanIstatistikleri = {
+                toplam_basvuru: detayliBasvuranlar.length,
+                erkek_basvuru: detayliBasvuranlar.filter(b => b.cinsiyet === 'Erkek').length,
+                kadin_basvuru: detayliBasvuranlar.filter(b => b.cinsiyet === 'Kadın').length,
+                ortalama_deneyim: detayliBasvuranlar.reduce((acc, curr) => acc + curr.is_deneyimleri.length, 0) / detayliBasvuranlar.length || 0,
+                yurt_tercihleri: secilenYurtlar[0].reduce((acc, curr) => {
+                    acc[curr.yurt_adi] = (acc[curr.yurt_adi] || 0) + 1;
+                    return acc;
+                }, {})
+            };
 
             return {
                 ilan_detay: ilan,
                 basvuranlar: detayliBasvuranlar,
-                basvuru_sayisi: detayliBasvuranlar.length
+                basvuru_sayisi: detayliBasvuranlar.length,
+                istatistikler: ilanIstatistikleri
             };
         }));
 
+        // Genel istatistikler
+        const genelIstatistikler = {
+            toplam_ilan: ilanlar.length,
+            toplam_basvuru: detayliIlanlar.reduce((acc, ilan) => acc + ilan.basvuru_sayisi, 0),
+            en_cok_basvuru_alan_ilan: detayliIlanlar.reduce((max, ilan) => 
+                ilan.basvuru_sayisi > max.basvuru_sayisi ? ilan : max
+            , {basvuru_sayisi: 0}).ilan_detay?.ilan_basligi
+        };
+
         res.json({
+            genel_istatistikler: genelIstatistikler,
             toplam_ilan_sayisi: ilanlar.length,
             ilanlar: detayliIlanlar
         });
@@ -645,7 +712,8 @@ app.get('/api/tum-basvurular/yurt', async (req, res) => {
         console.error('Veri çekme hatası:', error);
         res.status(500).json({
             error: 'Veritabanı hatası',
-            details: error.message
+            details: error.message,
+            stack: process.env.NODE_ENV === 'development' ? error.stack : undefined
         });
     }
 });
@@ -858,7 +926,22 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
+// Routes
+app.post('/api/users', async (req, res) => {
+    const userData = req.body;
+    try {
+        const [result] = await db.promise().query('INSERT INTO users SET ?', userData);
+        res.status(201).json({ user_id: result.insertId, message: 'Kullanıcı başarıyla oluşturuldu' });
+    } catch (error) {
+        console.error('Kullanıcı oluşturma hatası:', error);
+        res.status(500).json({ error: 'Kullanıcı oluşturulurken bir hata oluştu' });
+    }
+});
+
 app.post('/api/upload-cv', upload.single('cv'), async (req, res) => {
+    console.log('CV yükleme isteği alındı');
+    console.log('req.file:', req.file);
+    console.log('req.body:', req.body);
 
     if (!req.file) {
         console.log('Dosya yüklenmedi');
@@ -866,6 +949,7 @@ app.post('/api/upload-cv', upload.single('cv'), async (req, res) => {
     }
 
     const { userId } = req.body;
+    console.log('userId:', userId);
 
     try {
         const query = 'INSERT INTO cv (user_id, file_path) VALUES (?, ?)';
@@ -1031,7 +1115,9 @@ const photoUpload = multer({
 
 // Fotoğraf yükleme endpoint'i
 app.post('/api/upload-photo', photoUpload.single('photo'), async (req, res) => {
-   
+    console.log('Fotoğraf yükleme isteği alındı');
+    console.log('req.file:', req.file);
+    console.log('req.body:', req.body);
 
     if (!req.file) {
         console.log('Dosya yüklenmedi');
@@ -1294,7 +1380,7 @@ app.post('/api/sliders', (req, res) => {
     });
   });
   
-// Uygulamayı başlat
+
 app.listen(port, () => {
     console.log(`Sunucu http://localhost:${port} adresinde çalışıyor.`);
 });
