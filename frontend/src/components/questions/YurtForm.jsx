@@ -189,7 +189,7 @@ const YurtForm = () => {
                     secilenYurtlar: selectedYurts,
                     userId: userId
                 });
-                const response = await axios.post(`${API_URL}/api/secilen-yurtlar`, {
+                const response = await axios.post(`${API_URL}/api/secilen_yurtlar`, {
                     secilenYurtlar: selectedYurts,
                     userId: userId
                 });

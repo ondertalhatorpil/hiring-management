@@ -129,7 +129,7 @@ app.post('/api/egitim', async (req, res) => {
 
 
 // Seçilen yurtlar için GET API
-app.get('/api/secilen-yurtlar/:user_id', async (req, res) => {
+app.get('/api/secilen_yurtlar/:user_id', async (req, res) => {
     const userId = req.params.user_id;
     try {
         const [yurtlar] = await db.promise().query(
@@ -143,7 +143,7 @@ app.get('/api/secilen-yurtlar/:user_id', async (req, res) => {
     }
 });
 
-app.post('/api/secilen-yurtlar', async (req, res) => {
+app.post('/api/secilen_yurtlar', async (req, res) => {
     const { secilenYurtlar, userId } = req.body;
 
     if (!userId) {
@@ -172,7 +172,7 @@ app.post('/api/secilen-yurtlar', async (req, res) => {
             );
         }
 
-        await connection.commit();
+        await connection.commit(); 
         
         res.status(201).json({ 
             message: 'Seçilen yurtlar başarıyla kaydedildi',
