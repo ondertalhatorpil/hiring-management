@@ -189,7 +189,7 @@ const YurtForm = () => {
                     secilenYurtlar: selectedYurts,
                     userId: userId
                 });
-                const response = await axios.post(`${API_URL}/api/secilen_yurtlar`, {
+                const response = await axios.post(`${API_URL}/api/secilen-yurtlar`, {
                     secilenYurtlar: selectedYurts,
                     userId: userId
                 });
@@ -312,8 +312,7 @@ const YurtForm = () => {
         setShowErrorPopup(false);
     };
 
-    // ... önceki koddan devam
-
+   
 return (
     <div>
         <Header />
