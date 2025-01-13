@@ -184,10 +184,24 @@ const YurtForm = () => {
             console.log('Kullanıcı kaydı yanıtı:', userResponse.data);
             const userId = userResponse.data.user_id;
 
-            await axios.post(`${API_URL}/api/secilen-yurtlar`, {
-                secilenYurtlar: selectedYurts,
-                userId: userId
-            });
+            try {
+                console.log('Seçilen yurtlar gönderiliyor:', {
+                    secilenYurtlar: selectedYurts,
+                    userId: userId
+                });
+                const response = await axios.post(`${API_URL}/api/secilen-yurtlar`, {
+                    secilenYurtlar: selectedYurts,
+                    userId: userId
+                });
+                console.log('Yanıt:', response.data);
+            } catch (error) {
+                console.error('Hata detayı:', {
+                    config: error.config,
+                    fullUrl: error.config?.url,
+                    data: error.config?.data
+                });
+                throw error;
+            }
 
             if (user.photo) {
                 const photoFormData = new FormData();

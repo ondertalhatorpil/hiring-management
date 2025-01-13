@@ -143,7 +143,6 @@ app.get('/api/secilen-yurtlar/:user_id', async (req, res) => {
     }
 });
 
-// Seçilen yurtlar için POST API
 app.post('/api/secilen-yurtlar', async (req, res) => {
     const { secilenYurtlar, userId } = req.body;
 
@@ -151,33 +150,46 @@ app.post('/api/secilen-yurtlar', async (req, res) => {
         return res.status(400).json({ error: 'User ID gereklidir' });
     }
 
+    if (!Array.isArray(secilenYurtlar)) {
+        return res.status(400).json({ error: 'secilenYurtlar bir dizi olmalıdır' });
+    }
+
+    const connection = await db.promise().getConnection();
+    
     try {
-        // Önce bu kullanıcının eski yurt seçimlerini silelim
-        await db.promise().query(
+        await connection.beginTransaction();
+
+        await connection.query(
             'DELETE FROM secilen_yurtlar WHERE user_id = ?',
             [userId]
         );
 
-        // Yeni seçimleri ekleyelim
-        for (const yurt of secilenYurtlar) {
-            await db.promise().query(
-                'INSERT INTO secilen_yurtlar (user_id, yurt_adi) VALUES (?, ?)',
-                [userId, yurt]
+        if (secilenYurtlar.length > 0) {
+            const values = secilenYurtlar.map(yurt => [userId, yurt]);
+            await connection.query(
+                'INSERT INTO secilen_yurtlar (user_id, yurt_adi) VALUES ?',
+                [values]
             );
         }
 
+        await connection.commit();
+        
         res.status(201).json({ 
             message: 'Seçilen yurtlar başarıyla kaydedildi',
-            userId: userId
+            userId: userId,
+            count: secilenYurtlar.length
         });
     } catch (error) {
+        await connection.rollback();
         console.error('Seçilen yurtlar kayıt hatası:', error);
         res.status(500).json({ 
-            error: 'Seçilen yurtlar kaydedilirken bir hata oluştu' 
+            error: 'Seçilen yurtlar kaydedilirken bir hata oluştu',
+            details: error.message 
         });
+    } finally {
+        connection.release();
     }
 });
-
 
 // İlgi alanları için GET API
 app.get('/api/ilgi-alanlari/:user_id', (req, res) => {
