@@ -1,23 +1,68 @@
-version: '3.8'
 services:
+  backend-dev:
+    image: kariyer-backend
+    container_name: onder_backend
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      - NODE_ENV=production
+      - DB_HOST=onder_mysqldb
+      - DB_USER=root
+      - DB_PASSWORD=1453Abdullah*
+      - DB_NAME=onder
+      - PORT=8082
+      - CORS_ORIGIN=http://kariyer.onder.org.tr
+      - UPLOAD_DIR=uploads
+    volumes:
+      - backend:/app
+    networks:
+      - onder-wlan
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8082/api/yurt-ilanlar"]
+      interval: 30s
+      timeout: 5m
+      retries: 100
+
+  frontend:
+    container_name: onder_frontend
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    depends_on:
+      backend-dev:
+        condition: service_healthy
+    ports:
+      - 8141:80
+    networks:
+      - onder-wlan
+    restart: unless-stopped
+
   db:
     container_name: onder_mysqldb
     image: mariadb
-    command: --default-authentication-plugin=mysql_native_password
+    command: 
+      - '--default-authentication-plugin=mysql_native_password'
+      - '--bind-address=0.0.0.0'
+    restart: always
     environment:
       MYSQL_ROOT_PASSWORD: 1453Abdullah*
       MYSQL_DATABASE: onder
-    ports:
-      - "3306:3306"
+      MYSQL_ROOT_HOST: '%'
     healthcheck:
-      test: mysqladmin ping -h localhost -u root --password=1453Abdullah*
-      interval: 5s
-      timeout: 5s
-      retries: 20
+      test: [ "CMD", "healthcheck.sh", "--su-mysql", "--connect", "--innodb_initialized" ]
+      start_period: 30s
+      interval: 20s
+      timeout: 5m
+      retries: 100
     networks:
       - onder-wlan
     volumes:
-      - db:/var/lib/mysql
+      - ./db:/var/lib/mysql
       - ./init.sql:/docker-entrypoint-initdb.d/init.sql
 
   phpmyadmin:
@@ -25,58 +70,14 @@ services:
     image: phpmyadmin/phpmyadmin
     environment:
       PMA_HOST: onder_mysqldb
+      PMA_PORT: 3306
+      PMA_ARBITRARY: 1
       PMA_USER: root
       PMA_PASSWORD: 1453Abdullah*
-      MYSQL_ROOT_PASSWORD: 1453Abdullah*
-      PMA_ABSOLUTE_URI: http://localhost:8080/
     ports:
-      - "8080:80"
+      - "8147:80"
     depends_on:
       - db
-    networks:
-      - onder-wlan
-    restart: unless-stopped
-
-  backend:
-    container_name: onder_backend
-    build:
-      context: ./server
-      dockerfile: Dockerfile
-    environment:
-      - NODE_ENV=development
-      - DB_HOST=onder_mysqldb
-      - DB_USER=root
-      - DB_PASSWORD=1453Abdullah*
-      - DB_NAME=onder
-      - PORT=8082
-      - CORS_ORIGIN=http://localhost:3000
-      - UPLOAD_DIR=uploads
-    ports:
-      - "8082:8082"
-    volumes:
-      - ./server:/app
-      - /app/node_modules
-    networks:
-      - onder-wlan
-    depends_on:
-      db:
-        condition: service_healthy
-    restart: unless-stopped
-
-  frontend:
-    container_name: onder_frontend
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile
-    ports:
-      - "3000:3000"
-    environment:
-      - REACT_APP_API_URL=http://localhost:8082
-    volumes:
-      - ./frontend:/app
-      - /app/node_modules
-    depends_on:
-      - backend
     networks:
       - onder-wlan
     restart: unless-stopped
@@ -87,4 +88,6 @@ networks:
     driver: bridge
 
 volumes:
+  backend:
+  frontend:
   db:

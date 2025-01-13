@@ -9,6 +9,9 @@ COPY package*.json ./
 # Bağımlılıkları yükle
 RUN npm install
 
+RUN npm install @babel/plugin-proposal-private-property-in-object --save-dev  # Bu satırı ekleyin
+
+
 # Tüm kaynak kodları kopyala
 COPY . .
 
