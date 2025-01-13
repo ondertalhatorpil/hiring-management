@@ -33,6 +33,7 @@ const YurtForm = () => {
         dogum_tarihi: '',
         email: '',
         ev_adresi: '',
+        yurt_adi: '',
         askerlik_durumu: '',
         job_id: '',
         cep_telefonu: '',
@@ -184,6 +185,7 @@ const YurtForm = () => {
                 askerlik_durumu: user.askerlik_durumu,
                 dogum_tarihi: user.dogum_tarihi,
                 ev_adresi: user.ev_adresi,
+                yurt_adi: user.yurt_adi,
                 cep_telefonu: user.cep_telefonu,
                 ikinci_cep_telefonu: user.ikinci_cep_telefonu,
                 job_id: user.job_id
@@ -405,6 +407,38 @@ const YurtForm = () => {
                         <div className='FormAdress'>
                             <label> Ev Adresi Giriniz:</label>
                             <input className='formAdress' name="ev_adresi" placeholder="Ev Adresi" value={user.ev_adresi} onChange={handleChange} required />
+                        </div>
+
+                        <div className='formCinsiyetDogum'>
+                            <div className='FCD'>
+                                <label>Yurt seçiniz: </label>
+                                <select
+                                    name="yurt_adi"
+                                    placeholder="Yurt Adı"
+                                    value={user.yurt_adi}
+                                    onChange={handleChange} required
+                                >
+                                    <option value="">Yurt Seçiniz</option>
+                                    <option value="ANKARA ERKEK ÖĞRENCİ YURDU">ANKARA ERKEK ÖĞRENCİ YURDU</option>
+                                    <option value="AYDIN ERKEK ÖĞRENCİ YURDU">AYDIN ERKEK ÖĞRENCİ YURDU</option>
+                                    <option value="AYDIN KIZ ÖĞRENCİ YURDU">AYDIN KIZ ÖĞRENCİ YURDU</option>
+                                    <option value="BOLU ERKEK ÖĞRENCİ YURDU">BOLU ERKEK ÖĞRENCİ YURDU</option>
+                                    <option value="BURSA KAMP, EĞİTİM ve KONAKLAMA MERKEZİ">BURSA KAMP, EĞİTİM ve KONAKLAMA MERKEZİ</option>
+                                    <option value="İSTANBUL BAĞCILAR ERKEK ÖĞRENCİ YURDU">İSTANBUL BAĞCILAR ERKEK ÖĞRENCİ YURDU</option>
+                                    <option value="İSTANBUL BEŞİKTAŞ KIZ ÖĞRENCİ PANSİYONU">İSTANBUL BEŞİKTAŞ KIZ ÖĞRENCİ PANSİYONU</option>
+                                    <option value="İSTANBUL BÜYÜKÇEKMECE KAMP, EĞİTİM ve KONAKLAMA MERKEZİ">İSTANBUL BÜYÜKÇEKMECE KAMP, EĞİTİM ve KONAKLAMA MERKEZİ</option>
+                                    <option value="İSTANBUL CEVİZLİBAĞ KIZ ÖĞRENCİ PANSİYONU">İSTANBUL CEVİZLİBAĞ KIZ ÖĞRENCİ PANSİYONU</option>
+                                    <option value="İSTANBUL ÇENGELKÖY KIZ ÖĞRENCİ YURDU">İSTANBUL ÇENGELKÖY KIZ ÖĞRENCİ YURDU</option>
+                                    <option value="İSTANBUL EYÜP ERKEK ÖĞRENCİ YURDU">İSTANBUL EYÜP ERKEK ÖĞRENCİ YURDU</option>
+                                    <option value="İSTANBUL KÜÇÜKÇEKMECE KIZ ÖĞRENCİ YURDU">İSTANBUL KÜÇÜKÇEKMECE KIZ ÖĞRENCİ YURDU</option>
+                                    <option value="İZMİR ERKEK ÖĞRENCİ YURDU">İZMİR ERKEK ÖĞRENCİ YURDU</option>
+                                    <option value="KAYSERİ KIZ ÖĞRENCİ YURDU">KASYERİ KIZ ÖĞRENCİ YURDU</option>
+                                    <option value="KONYA ERKEK ÖĞRENCİ YURDU">KONYA ERKEK ÖĞRENCİ YURDU</option>
+                                    <option value="ŞANLIURFA KIZ ÖĞRENCİ YURDU">ŞANLIURFA KIZ ÖĞRENCİ YURDU</option>
+                                    <option value="YALOVA KIZ ÖĞRENCİ YURDU">YALOVA KIZ ÖĞRENCİ YURDU</option>
+                                    <option value="ZONGULDAK ERKEK ÖĞRENCİ YURDU">ZONGULDAK ERKEK ÖĞRENCİ YURDU</option>
+                                </select>
+                            </div>
                         </div>
 
                         <div>

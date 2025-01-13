@@ -60,6 +60,7 @@ app.post('/api/users', (req, res) => {
         surucu_belgesi, 
         dogum_tarihi, 
         ev_adresi, 
+        yurt_adi,
         cep_telefonu, 
         ikinci_cep_telefonu,
         job_id
@@ -69,8 +70,8 @@ app.post('/api/users', (req, res) => {
     const jobIdValue = job_id ? job_id : null;
 
     db.query(
-        'INSERT INTO users (ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, job_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, cep_telefonu, ikinci_cep_telefonu, jobIdValue],
+        'INSERT INTO users (ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, yurt_adi, cep_telefonu, ikinci_cep_telefonu, job_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, yurt_adi, cep_telefonu, ikinci_cep_telefonu, jobIdValue],
         (err, results) => {
             if (err) {
                 console.error('Kullanıcı kayıt hatası:', err);
