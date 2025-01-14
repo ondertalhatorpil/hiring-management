@@ -105,7 +105,7 @@ const GMIncele = () => {
                     <div className="applicant-details">
                       <p><strong>Email:</strong> {applicant.email}</p>
                       <p><strong>Telefon:</strong> {applicant.cep_telefonu}</p>
-                      <p><strong>Başvurulan Yurtlar:</strong> {applicant.secilen_yurtlar}</p>
+                      <p><strong>Ev Adresi:</strong> {applicant.ev_adresi}</p>
                     </div>
                   </div>
                 ))}

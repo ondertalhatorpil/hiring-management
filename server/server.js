@@ -1131,7 +1131,7 @@ app.delete('/api/photo/:photoId', async (req, res) => {
     }
 });
 
-// Server.js'e eklenecek endpoint'ler
+// Dashboard endpoints
 app.get('/api/dashboard/stats', async (req, res) => {
     try {
         const [
@@ -1144,58 +1144,71 @@ app.get('/api/dashboard/stats', async (req, res) => {
             // Aktif iş ilanları sayısı (merkez ve yurt)
             db.promise().query(`
                 SELECT 
-                    (SELECT COUNT(*) FROM merkez_ilanlar) as merkez_count,
-                    (SELECT COUNT(*) FROM yurt_ilanlar) as yurt_count
+                    (SELECT COUNT(DISTINCT job_id) FROM merkez_ilanlar) as merkez_count,
+                    (SELECT COUNT(DISTINCT job_id) FROM yurt_ilanlar) as yurt_count
             `),
 
             // Arşivlenmiş iş ilanları sayısı
             db.promise().query(`
                 SELECT 
-                    (SELECT COUNT(*) FROM arsiv_merkez_ilanlar) as merkez_archived,
-                    (SELECT COUNT(*) FROM arsiv_yurt_ilanlar) as yurt_archived
+                    (SELECT COUNT(DISTINCT job_id) FROM arsiv_merkez_ilanlar) as merkez_archived,
+                    (SELECT COUNT(DISTINCT job_id) FROM arsiv_yurt_ilanlar) as yurt_archived
             `),
 
-            // Toplam başvuran sayısı
-            db.promise().query('SELECT COUNT(DISTINCT user_id) as total FROM basvurular'),
-
-            // Son 5 başvuru
+            // Toplam benzersiz başvuran sayısı
             db.promise().query(`
-                SELECT u.ad, u.soyad, u.email, b.basvuru_tarihi,
+                SELECT COUNT(DISTINCT user_id) as total 
+                FROM basvurular 
+                WHERE user_id IN (SELECT user_id FROM users)
+            `),
+
+            // Son 5 başvuru - Doğrulanmış kullanıcılardan
+            db.promise().query(`
+                SELECT 
+                    u.ad, 
+                    u.soyad, 
+                    u.email, 
+                    b.basvuru_tarihi,
                     CASE 
-                        WHEN mi.ilan_basligi IS NOT NULL THEN mi.ilan_basligi
-                        ELSE yi.ilan_basligi
+                        WHEN b.ilan_type = 'merkez' THEN mi.ilan_basligi
+                        WHEN b.ilan_type = 'yurt' THEN yi.ilan_basligi
                     END as ilan_basligi
                 FROM basvurular b
                 JOIN users u ON b.user_id = u.user_id
-                LEFT JOIN merkez_ilanlar mi ON b.ilan_id = mi.id
-                LEFT JOIN yurt_ilanlar yi ON b.ilan_id = yi.id
+                LEFT JOIN merkez_ilanlar mi ON b.ilan_id = mi.id AND b.ilan_type = 'merkez'
+                LEFT JOIN yurt_ilanlar yi ON b.ilan_id = yi.id AND b.ilan_type = 'yurt'
                 ORDER BY b.basvuru_tarihi DESC
                 LIMIT 5
             `),
 
-            // İlanlara göre başvuru dağılımı
+            // İlanlara göre başvuru dağılımı - Her ilanın gerçek başvuru sayısı
             db.promise().query(`
-                SELECT 
-                    i.ilan_basligi,
-                    COUNT(b.user_id) as basvuru_sayisi,
-                    i.id,
-                    'merkez' as type
-                FROM merkez_ilanlar i
-                LEFT JOIN basvurular b ON i.id = b.ilan_id
-                GROUP BY i.id
-                UNION ALL
-                SELECT 
-                    i.ilan_basligi,
-                    COUNT(b.user_id) as basvuru_sayisi,
-                    i.id,
-                    'yurt' as type
-                FROM yurt_ilanlar i
-                LEFT JOIN basvurular b ON i.id = b.ilan_id
-                GROUP BY i.id
+                SELECT * FROM (
+                    SELECT 
+                        i.ilan_basligi,
+                        COUNT(DISTINCT b.user_id) as basvuru_sayisi,
+                        i.id,
+                        'merkez' as type,
+                        i.job_id
+                    FROM merkez_ilanlar i
+                    LEFT JOIN basvurular b ON i.id = b.ilan_id AND b.ilan_type = 'merkez'
+                    GROUP BY i.id, i.job_id
+                    UNION ALL
+                    SELECT 
+                        i.ilan_basligi,
+                        COUNT(DISTINCT b.user_id) as basvuru_sayisi,
+                        i.id,
+                        'yurt' as type,
+                        i.job_id
+                    FROM yurt_ilanlar i
+                    LEFT JOIN basvurular b ON i.id = b.ilan_id AND b.ilan_type = 'yurt'
+                    GROUP BY i.id, i.job_id
+                ) as combined
                 ORDER BY basvuru_sayisi DESC
             `)
         ]);
 
+        // Yanıt formatı
         res.json({
             activeJobs: {
                 merkez: activeJobsResult[0][0].merkez_count,
@@ -1211,9 +1224,13 @@ app.get('/api/dashboard/stats', async (req, res) => {
             recentApplications: recentApplicationsResult[0],
             applicationsByJob: applicationsByJobResult[0]
         });
+
     } catch (error) {
         console.error('Dashboard stats error:', error);
-        res.status(500).json({ error: 'Internal server error' });
+        res.status(500).json({ 
+            error: 'Internal server error',
+            details: process.env.NODE_ENV === 'development' ? error.message : undefined 
+        });
     }
 });
 

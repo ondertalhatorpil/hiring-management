@@ -231,51 +231,6 @@ doc.autoTable({
   }
 });
 
-// Seçilen Yurtlar için boşluk kontrolü
-const remainingSpaceAfterExp = pageHeight - doc.lastAutoTable.finalY;
-const estimatedSpaceForYurt = 60;
-
-if (remainingSpaceAfterExp < estimatedSpaceForYurt) {
-  doc.addPage();
-  yPos = margin;
-} else {
-  yPos = doc.lastAutoTable.finalY + 20;
-}
-
-// Seçilen Yurtlar bölümü
-doc.setFontSize(14);
-doc.setTextColor(41, 128, 185);
-doc.text(turkishToASCII('Secilen Yurtlar'), margin, yPos);
-yPos += 10;
-
-if (applicantData.secilen_yurtlar) {
-  const yurtlarArray = applicantData.secilen_yurtlar.split(',').map(yurt => [
-    turkishToASCII(yurt.trim())
-  ]);
-
-  doc.autoTable({
-    startY: yPos,
-    head: [['Yurt Adi']],
-    body: yurtlarArray,
-    theme: 'striped',
-    headStyles: {
-      fillColor: [41, 128, 185],
-      font: "helvetica",
-      halign: 'center'
-    },
-    styles: {
-      font: "helvetica",
-      fontSize: 10,
-      cellPadding: 5
-    }
-  });
-}
-
-
-
-
-
-    
 
  // İlgi Alanları
 const remainingSpaceAfterYurtlar = pageHeight - doc.lastAutoTable.finalY;
@@ -506,23 +461,6 @@ doc.autoTable({
               </div>
             ))}
           </div>
-
-
-          <div className="detail-card">
-            <h2>Seçilen Yurtlar</h2>
-            {applicantData.secilen_yurtlar && (
-              <div className="selected-dorms">
-                <p><strong>Seçilen Yurtlar:</strong></p>
-                <ul>
-                  {applicantData.secilen_yurtlar.split(',').map((yurt, index) => (
-                    <li key={index}>{yurt}</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-
 
           <div className="detail-card">
             <h2>İlgi Alanları</h2>
