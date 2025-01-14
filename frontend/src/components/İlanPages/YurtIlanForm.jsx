@@ -13,7 +13,7 @@ const YurtIlanForm = () => {
         is_tipi: '',
         sehir: '',
         detaylar: '',
-        maas: 'Belirtilmedi' // Maaş alanını ekleyin
+        maas: '' 
     });
 
    const handleChange = (e) => {
@@ -27,23 +27,16 @@ const YurtIlanForm = () => {
    const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-        // İstek öncesi log
-        console.log('Gönderilen veri:', {
-            ...ilanData,
-            user_id: 1,
-            ilan_tipi: 'yurt'
-        });
-
         const response = await axios.post(`${API_URL}/api/yurt-ilanlar`, {
             ...ilanData,
-            user_id: 1,
+            user_id: null,
             ilan_tipi: 'yurt'
         });
 
         console.log('Sunucu yanıtı:', response.data);
         alert('İlan başarıyla oluşturuldu!');
 
-        // Formu sıfırla
+        
         setIlanData({
             user_id: '',
             job_id: Math.floor(Math.random() * 1000000).toString(),
@@ -53,7 +46,7 @@ const YurtIlanForm = () => {
             is_tipi: '',
             sehir: '',
             detaylar: '',
-            maas: 'Belirtilmedi'
+            maas: ''
         });
 
     } catch (error) {

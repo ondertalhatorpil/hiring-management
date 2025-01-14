@@ -402,7 +402,7 @@ app.get('/api/yurt-ilanlar/:id', (req, res) => {
 
 app.post('/api/yurt-ilanlar', (req, res) => {
     const ilan = {
-        user_id: req.body.user_id, // Kullanıcı ID
+        user_id: req.body.user_id || null, 
         job_id: req.body.job_id,
         ilan_basligi: req.body.ilan_basligi, // İlan başlığı
         firma_adi: req.body.firma_adi, // Firma adı
@@ -411,6 +411,15 @@ app.post('/api/yurt-ilanlar', (req, res) => {
         sehir: req.body.sehir, // Şehir
         detaylar: req.body.detaylar, // Detaylar
     };
+
+    const requiredFields = ['job_id', 'ilan_basligi', 'firma_adi'];
+    for (const field of requiredFields) {
+        if (!ilan[field]) {
+            return res.status(400).json({ 
+                error: `${field} alanı zorunludur.` 
+            });
+        }
+    }
 
     db.query('INSERT INTO yurt_ilanlar SET ?', ilan, (err, result) => {
         if (err) {
@@ -454,7 +463,7 @@ app.get('/api/merkez-ilanlar/:id', (req, res) => {
 
 app.post('/api/merkez-ilanlar', (req, res) => {
     const ilan = {
-        user_id: req.body.user_id || null, // user_id opsiyonel
+        user_id: req.body.user_id || null, 
         job_id: req.body.job_id,
         ilan_basligi: req.body.ilan_basligi, 
         firma_adi: req.body.firma_adi, 
@@ -465,7 +474,6 @@ app.post('/api/merkez-ilanlar', (req, res) => {
         maas: req.body.maas
     };
 
-    // Sadece gerçekten zorunlu alanların kontrolü
     const requiredFields = ['job_id', 'ilan_basligi', 'firma_adi'];
     for (const field of requiredFields) {
         if (!ilan[field]) {
