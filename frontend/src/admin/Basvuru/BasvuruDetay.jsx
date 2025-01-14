@@ -214,60 +214,60 @@ const BasvuruDetay = () => {
     ]);
 
     // İş Deneyimleri bölümünden sonra
-doc.autoTable({
-  startY: yPos,
-  head: [['Firma', 'Pozisyon', 'Tarih']],
-  body: experienceData,
-  theme: 'striped',
-  headStyles: {
-    fillColor: [41, 128, 185],
-    font: "helvetica",
-    halign: 'center'
-  },
-  styles: {
-    font: "helvetica",
-    fontSize: 10,
-    cellPadding: 5
-  }
-});
+    doc.autoTable({
+      startY: yPos,
+      head: [['Firma', 'Pozisyon', 'Tarih']],
+      body: experienceData,
+      theme: 'striped',
+      headStyles: {
+        fillColor: [41, 128, 185],
+        font: "helvetica",
+        halign: 'center'
+      },
+      styles: {
+        font: "helvetica",
+        fontSize: 10,
+        cellPadding: 5
+      }
+    });
 
 
- // İlgi Alanları
-const remainingSpaceAfterYurtlar = pageHeight - doc.lastAutoTable.finalY;
-const estimatedSpaceForInterests = 60; // İlgi alanları için tahmini alan
+    // İlgi Alanları
+    const remainingSpaceAfterYurtlar = pageHeight - doc.lastAutoTable.finalY;
+    const estimatedSpaceForInterests = 60; // İlgi alanları için tahmini alan
 
-if (remainingSpaceAfterYurtlar < estimatedSpaceForInterests) {
-  doc.addPage();
-  yPos = margin;
-} else {
-  yPos = doc.lastAutoTable.finalY + 20;
-}
+    if (remainingSpaceAfterYurtlar < estimatedSpaceForInterests) {
+      doc.addPage();
+      yPos = margin;
+    } else {
+      yPos = doc.lastAutoTable.finalY + 20;
+    }
 
-doc.setFontSize(14);
-doc.setTextColor(41, 128, 185);
-doc.text(turkishToASCII('Ilgi Alanlari'), margin, yPos);
-yPos += 10;
+    doc.setFontSize(14);
+    doc.setTextColor(41, 128, 185);
+    doc.text(turkishToASCII('Ilgi Alanlari'), margin, yPos);
+    yPos += 10;
 
-const interestsData = applicantData.ilgi_alanlari.map(interest => [
-  turkishToASCII(interest.ilgi_alani)
-]);
+    const interestsData = applicantData.ilgi_alanlari.map(interest => [
+      turkishToASCII(interest.ilgi_alani)
+    ]);
 
-doc.autoTable({
-  startY: yPos,
-  head: [['Ilgi Alani']],
-  body: interestsData,
-  theme: 'striped',
-  headStyles: {
-    fillColor: [41, 128, 185],
-    font: "helvetica",
-    halign: 'center'
-  },
-  styles: {
-    font: "helvetica",
-    fontSize: 10,
-    cellPadding: 5
-  }
-});
+    doc.autoTable({
+      startY: yPos,
+      head: [['Ilgi Alani']],
+      body: interestsData,
+      theme: 'striped',
+      headStyles: {
+        fillColor: [41, 128, 185],
+        font: "helvetica",
+        halign: 'center'
+      },
+      styles: {
+        font: "helvetica",
+        fontSize: 10,
+        cellPadding: 5
+      }
+    });
 
     // Sertifikalar
     const remainingSpaceAfterInt = pageHeight - doc.lastAutoTable.finalY;

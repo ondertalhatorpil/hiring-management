@@ -4,16 +4,17 @@ import axios from 'axios';
 const API_URL = process.env.REACT_APP_API_URL;
 
 const YurtIlanForm = () => {
-   const [ilanData, setIlanData] = useState({
-       user_id: '',
-       job_id: Math.floor(Math.random() * 1000000).toString(), 
-       ilan_basligi: '',
-       firma_adi: '',
-       ilan_tarihi: '',
-       is_tipi: '',
-       sehir: '',
-       detaylar: '',
-   });
+    const [ilanData, setIlanData] = useState({
+        user_id: '',
+        job_id: Math.floor(Math.random() * 1000000).toString(), 
+        ilan_basligi: '',
+        firma_adi: '',
+        ilan_tarihi: '',
+        is_tipi: '',
+        sehir: '',
+        detaylar: '',
+        maas: 'Belirtilmedi' // Maaş alanını ekleyin
+    });
 
    const handleChange = (e) => {
        const { name, value } = e.target;
@@ -24,36 +25,42 @@ const YurtIlanForm = () => {
    };
 
    const handleSubmit = async (e) => {
-       e.preventDefault();
-       try {
-           // İlanı oluştur
-           const response = await axios.post(`${API_URL}/api/yurt-ilanlar`, {
-               ...ilanData,
-               job_id: ilanData.job_id,
-               user_id: 1, // Veya dinamik bir kullanıcı ID'si
-               ilan_tipi: 'yurt' // İlan tipini belirt
-           });
+    e.preventDefault();
+    try {
+        // İstek öncesi log
+        console.log('Gönderilen veri:', {
+            ...ilanData,
+            user_id: 1,
+            ilan_tipi: 'yurt'
+        });
 
-           console.log('İlan başarıyla oluşturuldu:', response.data);
-           alert('İlan başarıyla oluşturuldu!');
+        const response = await axios.post(`${API_URL}/api/yurt-ilanlar`, {
+            ...ilanData,
+            user_id: 1,
+            ilan_tipi: 'yurt'
+        });
 
-           // Formu sıfırla
-           setIlanData({
-               user_id: '',
-               job_id: Math.floor(Math.random() * 1000000).toString(),
-               ilan_basligi: '',
-               firma_adi: '',
-               ilan_tarihi: '',
-               is_tipi: '',
-               sehir: '',
-               detaylar: '',
-           });
+        console.log('Sunucu yanıtı:', response.data);
+        alert('İlan başarıyla oluşturuldu!');
 
-       } catch (error) {
-           console.error('İlan oluşturulurken hata:', error);
-           alert('İlan oluşturulurken bir hata oluştu!');
-       }
-   };
+        // Formu sıfırla
+        setIlanData({
+            user_id: '',
+            job_id: Math.floor(Math.random() * 1000000).toString(),
+            ilan_basligi: '',
+            firma_adi: '',
+            ilan_tarihi: '',
+            is_tipi: '',
+            sehir: '',
+            detaylar: '',
+            maas: 'Belirtilmedi'
+        });
+
+    } catch (error) {
+        console.error('Hata detayı:', error.response?.data || error.message);
+        alert(`İlan oluşturulurken bir hata oluştu: ${error.response?.data?.error || error.message}`);
+    }
+};
 
    return (
        <div className="merkez-form-container">
