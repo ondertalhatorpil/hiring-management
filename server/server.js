@@ -454,19 +454,34 @@ app.get('/api/merkez-ilanlar/:id', (req, res) => {
 
 app.post('/api/merkez-ilanlar', (req, res) => {
     const ilan = {
-        user_id: req.body.user_id, // Kullanıcı ID
+        user_id: req.body.user_id, 
         job_id: req.body.job_id,
-        ilan_basligi: req.body.ilan_basligi, // İlan başlığı
-        firma_adi: req.body.firma_adi, // Firma adı
-        ilan_tarihi: req.body.ilan_tarihi, // İlan tarihi
-        is_tipi: req.body.is_tipi, // İş tipi
-        sehir: req.body.sehir, // Şehir
-        detaylar: req.body.detaylar // Detaylar
+        ilan_basligi: req.body.ilan_basligi, 
+        firma_adi: req.body.firma_adi, 
+        ilan_tarihi: req.body.ilan_tarihi, 
+        is_tipi: req.body.is_tipi, 
+        sehir: req.body.sehir, 
+        detaylar: req.body.detaylar,
+        maas: req.body.maas
     };
+
+    // Zorunlu alanların kontrolü
+    const requiredFields = ['user_id', 'job_id', 'ilan_basligi', 'firma_adi'];
+    for (const field of requiredFields) {
+        if (!ilan[field]) {
+            return res.status(400).json({ 
+                error: `${field} alanı zorunludur.` 
+            });
+        }
+    }
 
     db.query('INSERT INTO merkez_ilanlar SET ?', ilan, (err, result) => {
         if (err) {
-            return res.status(500).json({ error: err.message });
+            console.error('Database error:', err);
+            return res.status(500).json({ 
+                error: err.message,
+                details: err.sqlMessage || 'Veritabanı hatası'
+            });
         }
         res.status(201).json({ id: result.insertId, ...ilan });
     });

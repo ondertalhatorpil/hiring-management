@@ -31,18 +31,19 @@ const MerkezİlanForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            // İlanı oluştur
+            console.log('Gönderilecek veri:', ilanData); // Veriyi kontrol et
+            
             const response = await axios.post(`${API_URL}/api/merkez-ilanlar`, {
                 ...ilanData,
-                job_id: ilanData.job_id, // job_id'yi gönder
-                user_id: 1, // Veya dinamik bir kullanıcı ID'si
-                ilan_tipi: 'merkez' // İlan tipini belirt
+                job_id: ilanData.job_id,
+                user_id: 1,
+                ilan_tipi: 'merkez'
             });
-
-            console.log('İlan başarıyla oluşturuldu:', response.data);
+            
+            console.log('Sunucu yanıtı:', response.data);
             alert('İlan başarıyla oluşturuldu!');
             
-            // Formu sıfırla
+            // Form reset
             setIlanData({
                 user_id: '',
                 job_id: Math.floor(Math.random() * 1000000).toString(),
@@ -54,10 +55,9 @@ const MerkezİlanForm = () => {
                 detaylar: '',
                 maas: ''
             });
-
         } catch (error) {
-            console.error('İlan oluşturulurken hata:', error);
-            alert('İlan oluşturulurken bir hata oluştu!');
+            console.error('Hata detayı:', error.response?.data || error.message);
+            alert(`İlan oluşturulurken bir hata oluştu: ${error.response?.data?.error || error.message}`);
         }
     };
 
