@@ -56,9 +56,21 @@ const MerkezİlanForm = () => {
                 maas: ''
             });
         } catch (error) {
-            console.error('Hata detayı:', error.response?.data || error.message);
-            alert(`İlan oluşturulurken bir hata oluştu: ${error.response?.data?.error || error.message}`);
+            if (error.response) {
+                // Sunucu yanıtı var ama hata ile döndü
+                console.error('Sunucu hatası:', error.response.data);
+                alert(`İlan oluşturulurken bir hata oluştu: ${error.response.data.error || 'Bilinmeyen sunucu hatası'}`);
+            } else if (error.request) {
+                // İstek gönderildi ama yanıt alınamadı
+                console.error('Yanıt alınamadı:', error.request);
+                alert('Sunucudan yanıt alınamadı, lütfen daha sonra tekrar deneyin.');
+            } else {
+                // İstek hazırlanırken hata oluştu
+                console.error('Hata:', error.message);
+                alert(`Bir hata oluştu: ${error.message}`);
+            }
         }
+        
     };
 
     return (
