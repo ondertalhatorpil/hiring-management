@@ -454,7 +454,7 @@ app.get('/api/merkez-ilanlar/:id', (req, res) => {
 
 app.post('/api/merkez-ilanlar', (req, res) => {
     const ilan = {
-        user_id: req.body.user_id, 
+        user_id: req.body.user_id || null, // user_id opsiyonel
         job_id: req.body.job_id,
         ilan_basligi: req.body.ilan_basligi, 
         firma_adi: req.body.firma_adi, 
@@ -465,8 +465,8 @@ app.post('/api/merkez-ilanlar', (req, res) => {
         maas: req.body.maas
     };
 
-    // Zorunlu alanların kontrolü
-    const requiredFields = ['user_id', 'job_id', 'ilan_basligi', 'firma_adi'];
+    // Sadece gerçekten zorunlu alanların kontrolü
+    const requiredFields = ['job_id', 'ilan_basligi', 'firma_adi'];
     for (const field of requiredFields) {
         if (!ilan[field]) {
             return res.status(400).json({ 
@@ -486,7 +486,6 @@ app.post('/api/merkez-ilanlar', (req, res) => {
         res.status(201).json({ id: result.insertId, ...ilan });
     });
 });
-
 
 app.post('/api/basvurular', (req, res) => {
     const { userId, ilanId } = req.body;

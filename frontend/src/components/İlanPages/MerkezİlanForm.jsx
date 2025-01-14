@@ -31,16 +31,14 @@ const MerkezİlanForm = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            console.log('Gönderilecek veri:', ilanData); // Veriyi kontrol et
-            
             const response = await axios.post(`${API_URL}/api/merkez-ilanlar`, {
                 ...ilanData,
                 job_id: ilanData.job_id,
-                user_id: 1,
+                user_id: null, // user_id'yi null olarak gönder
                 ilan_tipi: 'merkez'
             });
             
-            console.log('Sunucu yanıtı:', response.data);
+            console.log('İlan başarıyla oluşturuldu:', response.data);
             alert('İlan başarıyla oluşturuldu!');
             
             // Form reset
@@ -56,21 +54,9 @@ const MerkezİlanForm = () => {
                 maas: ''
             });
         } catch (error) {
-            if (error.response) {
-                // Sunucu yanıtı var ama hata ile döndü
-                console.error('Sunucu hatası:', error.response.data);
-                alert(`İlan oluşturulurken bir hata oluştu: ${error.response.data.error || 'Bilinmeyen sunucu hatası'}`);
-            } else if (error.request) {
-                // İstek gönderildi ama yanıt alınamadı
-                console.error('Yanıt alınamadı:', error.request);
-                alert('Sunucudan yanıt alınamadı, lütfen daha sonra tekrar deneyin.');
-            } else {
-                // İstek hazırlanırken hata oluştu
-                console.error('Hata:', error.message);
-                alert(`Bir hata oluştu: ${error.message}`);
-            }
+            console.error('Hata detayı:', error.response?.data || error.message);
+            alert(`İlan oluşturulurken bir hata oluştu: ${error.response?.data?.error || error.message}`);
         }
-        
     };
 
     return (
