@@ -71,7 +71,7 @@ services:
       PMA_USER: root
       PMA_PASSWORD: 1453Abdullah*
     ports:
-      - "8080:80"
+      - "8147:80"
     depends_on:
       - db
     networks:
