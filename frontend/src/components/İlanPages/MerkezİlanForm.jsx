@@ -98,90 +98,152 @@ const MerkezİlanForm = () => {
                 <button type="submit" className="merkez-form-button">İlanı Aç</button>
             </form>
             <style jsx>{`
-       .merkez-form-container {
-    font-family: 'Arial', sans-serif;
-    background-color: #f9fafb;
-    padding: 40px;
-    border-radius: 10px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    max-width: 100%;
-    width: 100%;
+  .merkez-form-container {
+    max-width: 800px;
+    margin: 40px auto;
+    padding: 30px;
+    background: #ffffff;
+    border-radius: 20px;
+    box-shadow: 0 10px 30px rgba(209, 42, 44, 0.1);
     font-family: "Outfit", sans-serif;
-    margin: auto;
-}
+  }
 
-.merkez-form-title {
+  .merkez-form-title {
+    background: linear-gradient(135deg, #D12A2C 0%, #ff4444 100%);
+    color: white;
+    padding: 40px 20px;
+    margin: -30px -30px 40px;
+    border-radius: 20px 20px 0 0;
+    font-size: 28px;
+    font-weight: 700;
     text-align: center;
-    margin-bottom: 30px;
-    color: #fff;
-    font-size: 34px;
-    padding: 80px 0;
-    background-color: #D12A2C;
-}
+    box-shadow: 0 4px 15px rgba(209, 42, 44, 0.2);
+  }
 
-.merkez-form-group {
-    margin-bottom: 20px;
-}
+  .merkez-form-group {
+    margin-bottom: 28px;
+    position: relative;
+  }
 
-.merkez-form-group label {
+  .merkez-form-group label {
     display: block;
-    font-weight: bold;
-    margin-bottom: 8px;
-    color: #34495e;
-}
-
-.merkez-form-group input,
-.merkez-form-group textarea {
-    width: 100%;
-    padding: 10px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: 600;
     color: #2c3e50;
-}
+    font-size: 16px;
+    transition: color 0.3s ease;
+  }
 
-.merkez-form-group input:focus,
-.merkez-form-group textarea:focus {
-    border-color: #2980b9;
+  .merkez-form-group input,
+  .merkez-form-group select,
+  .merkez-form-group textarea {
+    width: 100%;
+    padding: 14px 18px;
+    border: 2px solid #e9ecef;
+    border-radius: 12px;
+    font-size: 15px;
+    color: #334155;
+    transition: all 0.3s ease;
+    background-color: #f8f9fa;
+  }
+
+  .merkez-form-group input:hover,
+  .merkez-form-group select:hover,
+  .merkez-form-group textarea:hover {
+    border-color: #D12A2C;
+  }
+
+  .merkez-form-group input:focus,
+  .merkez-form-group select:focus,
+  .merkez-form-group textarea:focus {
     outline: none;
-}
+    border-color: #D12A2C;
+    box-shadow: 0 0 0 4px rgba(209, 42, 44, 0.1);
+    background-color: #ffffff;
+  }
 
-.merkez-form-group textarea {
-    height: 100px;
+  .merkez-form-group select {
+    appearance: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23D12A2C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    background-size: 18px;
+    padding-right: 45px;
+  }
+
+  .merkez-form-group textarea {
+    min-height: 160px;
     resize: vertical;
-}
+    line-height: 1.5;
+  }
 
-.merkez-form-button {
-    width: 20%;
-    padding: 12px;
-    background-color: #D12A2C;
+  .merkez-form-group:first-of-type label {
+    background-color: #f8f9fa;
+    padding: 12px 18px;
+    border-radius: 12px;
+    color: #64748b;
+    font-size: 15px;
+    border: 2px solid #e9ecef;
+    font-weight: normal;
+  }
+
+  .merkez-form-button {
+    width: 100%;
+    padding: 16px 24px;
+    background: linear-gradient(135deg, #D12A2C 0%, #ff4444 100%);
     color: white;
     border: none;
-    border-radius: 5px;
-    font-size: 18px;
+    border-radius: 12px;
+    font-size: 17px;
+    font-weight: 600;
     cursor: pointer;
-    margin-top: 20px;
-}
+    transition: all 0.3s ease;
+    margin-top: 30px;
+    box-shadow: 0 4px 15px rgba(209, 42, 44, 0.2);
+  }
 
-.merkez-form-button:hover {
-    background-color: #3498db;
-}
+  .merkez-form-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(209, 42, 44, 0.3);
+  }
 
-.merkez-form-button:active {
-    background-color: #1f6c9c;
-}
+  .merkez-form-button:active {
+    transform: translateY(0);
+    box-shadow: 0 4px 10px rgba(209, 42, 44, 0.2);
+  }
 
-@media (max-width: 600px) {
+  input::placeholder,
+  textarea::placeholder {
+    color: #94a3b8;
+  }
+
+  @media (max-width: 768px) {
     .merkez-form-container {
-        padding: 20px;
+      margin: 20px;
+      padding: 20px;
+      border-radius: 16px;
     }
 
     .merkez-form-title {
-        font-size: 20px;
+      font-size: 22px;
+      padding: 30px 15px;
+      margin: -20px -20px 30px;
+      border-radius: 16px 16px 0 0;
     }
-}
 
-      `}</style>
+    .merkez-form-group input,
+    .merkez-form-group select,
+    .merkez-form-group textarea {
+      padding: 12px 16px;
+      font-size: 14px;
+    }
+
+    .merkez-form-button {
+      padding: 14px 20px;
+      font-size: 16px;
+    }
+  }
+`}</style>
         </div>
     );
 };

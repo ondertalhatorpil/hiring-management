@@ -88,15 +88,12 @@ const GMIncele = () => {
                 <p className="company-name">{job.ilan_detay.firma_adi}</p>
                 <p className="job-info">
                   <span>{job.ilan_detay.sehir}</span>
-                  <span>{job.ilan_detay.is_tipi}</span>
                 </p>
-                <p className="salary">Maaş: {job.ilan_detay.maas} TL</p>
               </div>
             </div>
           ))}
         </div>
 
-        {/* Sağ Panel - Başvuru Detayları */}
         <div className="applications-panel">
           {selectedJob ? (
             <>
