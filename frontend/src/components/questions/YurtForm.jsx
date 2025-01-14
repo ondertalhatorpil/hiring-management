@@ -22,26 +22,27 @@ const YurtForm = () => {
     const [kvkkConsent, setKvkkConsent] = useState(false);
 
 
-    const selectData = [
-        { value: "ANKARA ERKEK ÖĞRENCİ YURDU", label: "ANKARA ERKEK ÖĞRENCİ YURDU" },
-        { value: "AYDIN ERKEK ÖĞRENCİ YURDU", label: "AYDIN ERKEK ÖĞRENCİ YURDU" },
-        { value: "AYDIN KIZ ÖĞRENCİ YURDU", label: "AYDIN KIZ ÖĞRENCİ YURDU" },
-        { value: "BOLU ERKEK ÖĞRENCİ YURDU", label: "BOLU ERKEK ÖĞRENCİ YURDU" },
-        { value: "BURSA KAMP, EĞİTİM ve KONAKLAMA MERKEZİ", label: "BURSA KAMP, EĞİTİM ve KONAKLAMA MERKEZİ" },
-        { value: "İSTANBUL BAĞCILAR ERKEK ÖĞRENCİ YURDU", label: "İSTANBUL BAĞCILAR ERKEK ÖĞRENCİ YURDU" },
-        { value: "İSTANBUL BEŞİKTAŞ KIZ ÖĞRENCİ PANSİYONU", label: "İSTANBUL BEŞİKTAŞ KIZ ÖĞRENCİ PANSİYONU" },
-        { value: "İSTANBUL BÜYÜKÇEKMECE KAMP, EĞİTİM ve KONAKLAMA MERKEZİ", label: "İSTANBUL BÜYÜKÇEKMECE KAMP, EĞİTİM ve KONAKLAMA MERKEZİ" },
-        { value: "İSTANBUL CEVİZLİBAĞ KIZ ÖĞRENCİ PANSİYONU", label: "İSTANBUL CEVİZLİBAĞ KIZ ÖĞRENCİ PANSİYONU" },
-        { value: "İSTANBUL ÇENGELKÖY KIZ ÖĞRENCİ YURDU", label: "İSTANBUL ÇENGELKÖY KIZ ÖĞRENCİ YURDU" },
-        { value: "İSTANBUL EYÜP ERKEK ÖĞRENCİ YURDU", label: "İSTANBUL EYÜP ERKEK ÖĞRENCİ YURDU" },
-        { value: "İSTANBUL KÜÇÜKÇEKMECE KIZ ÖĞRENCİ YURDU", label: "İSTANBUL KÜÇÜKÇEKMECE KIZ ÖĞRENCİ YURDU" },
-        { value: "İZMİR ERKEK ÖĞRENCİ YURDU", label: "İZMİR ERKEK ÖĞRENCİ YURDU" },
-        { value: "KAYSERİ KIZ ÖĞRENCİ YURDU", label: "KAYSERİ KIZ ÖĞRENCİ YURDU" },
-        { value: "KONYA ERKEK ÖĞRENCİ YURDU", label: "KONYA ERKEK ÖĞRENCİ YURDU" },
-        { value: "ŞANLIURFA KIZ ÖĞRENCİ YURDU", label: "ŞANLIURFA KIZ ÖĞRENCİ YURDU" },
-        { value: "YALOVA KIZ ÖĞRENCİ YURDU", label: "YALOVA KIZ ÖĞRENCİ YURDU" },
-        { value: "ZONGULDAK ERKEK ÖĞRENCİ YURDU", label: "ZONGULDAK ERKEK ÖĞRENCİ YURDU" },
-    ];
+    // const selectData = [
+    //     { value: "ANKARA ERKEK ÖĞRENCİ YURDU", label: "ANKARA ERKEK ÖĞRENCİ YURDU" },
+    //     { value: "AYDIN ERKEK ÖĞRENCİ YURDU", label: "AYDIN ERKEK ÖĞRENCİ YURDU" },
+    //     { value: "AYDIN KIZ ÖĞRENCİ YURDU", label: "AYDIN KIZ ÖĞRENCİ YURDU" },
+    //     { value: "BOLU ERKEK ÖĞRENCİ YURDU", label: "BOLU ERKEK ÖĞRENCİ YURDU" },
+    //     { value: "BURSA KAMP, EĞİTİM ve KONAKLAMA MERKEZİ", label: "BURSA KAMP, EĞİTİM ve KONAKLAMA MERKEZİ" },
+    //     { value: "İSTANBUL BAĞCILAR ERKEK ÖĞRENCİ YURDU", label: "İSTANBUL BAĞCILAR ERKEK ÖĞRENCİ YURDU" },
+    //     { value: "İSTANBUL BEŞİKTAŞ KIZ ÖĞRENCİ PANSİYONU", label: "İSTANBUL BEŞİKTAŞ KIZ ÖĞRENCİ PANSİYONU" },
+    //     { value: "İSTANBUL BÜYÜKÇEKMECE KAMP, EĞİTİM ve KONAKLAMA MERKEZİ", label: "İSTANBUL BÜYÜKÇEKMECE KAMP, EĞİTİM ve KONAKLAMA MERKEZİ" },
+    //     { value: "İSTANBUL CEVİZLİBAĞ KIZ ÖĞRENCİ PANSİYONU", label: "İSTANBUL CEVİZLİBAĞ KIZ ÖĞRENCİ PANSİYONU" },
+    //     { value: "İSTANBUL ÇENGELKÖY KIZ ÖĞRENCİ YURDU", label: "İSTANBUL ÇENGELKÖY KIZ ÖĞRENCİ YURDU" },
+    //     { value: "İSTANBUL EYÜP ERKEK ÖĞRENCİ YURDU", label: "İSTANBUL EYÜP ERKEK ÖĞRENCİ YURDU" },
+    //     { value: "İSTANBUL KÜÇÜKÇEKMECE KIZ ÖĞRENCİ YURDU", label: "İSTANBUL KÜÇÜKÇEKMECE KIZ ÖĞRENCİ YURDU" },
+    //     { value: "İZMİR ERKEK ÖĞRENCİ YURDU", label: "İZMİR ERKEK ÖĞRENCİ YURDU" },
+    //     { value: "KAYSERİ KIZ ÖĞRENCİ YURDU", label: "KAYSERİ KIZ ÖĞRENCİ YURDU" },
+    //     { value: "KONYA ERKEK ÖĞRENCİ YURDU", label: "KONYA ERKEK ÖĞRENCİ YURDU" },
+    //     { value: "ŞANLIURFA KIZ ÖĞRENCİ YURDU", label: "ŞANLIURFA KIZ ÖĞRENCİ YURDU" },
+    //     { value: "YALOVA KIZ ÖĞRENCİ YURDU", label: "YALOVA KIZ ÖĞRENCİ YURDU" },
+    //     { value: "ZONGULDAK ERKEK ÖĞRENCİ YURDU", label: "ZONGULDAK ERKEK ÖĞRENCİ YURDU" },
+    // ];  
+
     const [user, setUser] = useState({
         ad: '',
         soyad: '',
@@ -52,7 +53,7 @@ const YurtForm = () => {
         dogum_tarihi: '',
         email: '',
         ev_adresi: '',
-        secilen_yurtlar: [],
+        // secilen_yurtlar: [],
         askerlik_durumu: '',
         job_id: '',
         cep_telefonu: '',
@@ -204,7 +205,7 @@ const YurtForm = () => {
                 askerlik_durumu: user.askerlik_durumu,
                 dogum_tarihi: user.dogum_tarihi,
                 ev_adresi: user.ev_adresi,
-                secilen_yurtlar: user.secilen_yurtlar,
+                // secilen_yurtlar: user.secilen_yurtlar,
                 cep_telefonu: user.cep_telefonu,
                 ikinci_cep_telefonu: user.ikinci_cep_telefonu,
                 job_id: user.job_id
@@ -301,7 +302,7 @@ const YurtForm = () => {
                 ev_adresi: '',
                 cep_telefonu: '',
                 job_id: '',
-                secilen_yurtlar: [],
+                // secilen_yurtlar: [],
                 ikinci_cep_telefonu: '',
                 egitim: [{ okul_adi: '', bolum: '', baslangic_tarihi: '', bitis_tarihi: '' }],
                 sertifika: [{ sertifika_adi: '', alindi_tarihi: '' }],
@@ -314,8 +315,7 @@ const YurtForm = () => {
 
             });
             setPhotoPreview(null);
-            navigate('/success'); // history.push yerine navigate kullanıyoruz
-
+            navigate('/success'); 
         } catch (error) {
             console.error('Hata:', error);
             alert('Form gönderilirken bir hata oluştu: ' + error.message);
@@ -439,8 +439,9 @@ const YurtForm = () => {
                                 onChange={(e) => handleChange({ target: { name: "secilen_yurtlar", value: e } })}
                                 isMulti
                             />
-                        </div>
+                        </div>  
 
+                        {/*            
                         <div>
                             <div className='formTel'>
                                 <div className='FTForm'>
@@ -453,6 +454,7 @@ const YurtForm = () => {
                                 </div>
                             </div>
                         </div>
+                        */}
 
                         <div className='MMASForm'>
                             <div className='MMForm'>

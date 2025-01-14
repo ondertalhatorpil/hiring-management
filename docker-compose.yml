@@ -67,9 +67,11 @@ services:
     image: phpmyadmin/phpmyadmin
     container_name: onder_phpmyadmin
     environment:
-      PMA_HOST: onder_mysqldb
-      PMA_USER: root
-      PMA_PASSWORD: 1453Abdullah*
+      - PMA_HOST=onder_mysqldb
+      - PMA_USER=root
+      - PMA_PASSWORD=1453Abdullah*  
+      - UPLOAD_LIMIT=300M 
+      - MEMORY_LIMIT=512M 
     ports:
       - "8147:80"
     depends_on:
@@ -77,6 +79,13 @@ services:
     networks:
       - onder-wlan
     restart: unless-stopped
+    healthcheck:  
+      test: ["CMD", "curl", "-f", "http://localhost:80/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    volumes:  
+      - /sessions  
 
 networks:
   onder-wlan:
