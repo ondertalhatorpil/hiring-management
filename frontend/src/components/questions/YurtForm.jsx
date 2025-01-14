@@ -1,12 +1,12 @@
-import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { Link, useParams, useNavigate } from 'react-router-dom';
-import Header from '../Header/Header';
+import React, { useEffect, useState } from 'react';
+import { Link, useNavigate, useParams } from 'react-router-dom';
 import Footer from '../Footer/Footer';
+import Header from '../Header/Header';
 
 import { FiArrowLeft } from "react-icons/fi";
-import './css/YurtForm.css'
-
+import MultiSelect from "react-select";
+import './css/YurtForm.css';
 
 const API_URL = process.env.REACT_APP_API_URL;
 
@@ -22,7 +22,26 @@ const YurtForm = () => {
     const [kvkkConsent, setKvkkConsent] = useState(false);
 
 
-
+    const selectData = [
+        { value: "ANKARA ERKEK ÖĞRENCİ YURDU", label: "ANKARA ERKEK ÖĞRENCİ YURDU" },
+        { value: "AYDIN ERKEK ÖĞRENCİ YURDU", label: "AYDIN ERKEK ÖĞRENCİ YURDU" },
+        { value: "AYDIN KIZ ÖĞRENCİ YURDU", label: "AYDIN KIZ ÖĞRENCİ YURDU" },
+        { value: "BOLU ERKEK ÖĞRENCİ YURDU", label: "BOLU ERKEK ÖĞRENCİ YURDU" },
+        { value: "BURSA KAMP, EĞİTİM ve KONAKLAMA MERKEZİ", label: "BURSA KAMP, EĞİTİM ve KONAKLAMA MERKEZİ" },
+        { value: "İSTANBUL BAĞCILAR ERKEK ÖĞRENCİ YURDU", label: "İSTANBUL BAĞCILAR ERKEK ÖĞRENCİ YURDU" },
+        { value: "İSTANBUL BEŞİKTAŞ KIZ ÖĞRENCİ PANSİYONU", label: "İSTANBUL BEŞİKTAŞ KIZ ÖĞRENCİ PANSİYONU" },
+        { value: "İSTANBUL BÜYÜKÇEKMECE KAMP, EĞİTİM ve KONAKLAMA MERKEZİ", label: "İSTANBUL BÜYÜKÇEKMECE KAMP, EĞİTİM ve KONAKLAMA MERKEZİ" },
+        { value: "İSTANBUL CEVİZLİBAĞ KIZ ÖĞRENCİ PANSİYONU", label: "İSTANBUL CEVİZLİBAĞ KIZ ÖĞRENCİ PANSİYONU" },
+        { value: "İSTANBUL ÇENGELKÖY KIZ ÖĞRENCİ YURDU", label: "İSTANBUL ÇENGELKÖY KIZ ÖĞRENCİ YURDU" },
+        { value: "İSTANBUL EYÜP ERKEK ÖĞRENCİ YURDU", label: "İSTANBUL EYÜP ERKEK ÖĞRENCİ YURDU" },
+        { value: "İSTANBUL KÜÇÜKÇEKMECE KIZ ÖĞRENCİ YURDU", label: "İSTANBUL KÜÇÜKÇEKMECE KIZ ÖĞRENCİ YURDU" },
+        { value: "İZMİR ERKEK ÖĞRENCİ YURDU", label: "İZMİR ERKEK ÖĞRENCİ YURDU" },
+        { value: "KAYSERİ KIZ ÖĞRENCİ YURDU", label: "KAYSERİ KIZ ÖĞRENCİ YURDU" },
+        { value: "KONYA ERKEK ÖĞRENCİ YURDU", label: "KONYA ERKEK ÖĞRENCİ YURDU" },
+        { value: "ŞANLIURFA KIZ ÖĞRENCİ YURDU", label: "ŞANLIURFA KIZ ÖĞRENCİ YURDU" },
+        { value: "YALOVA KIZ ÖĞRENCİ YURDU", label: "YALOVA KIZ ÖĞRENCİ YURDU" },
+        { value: "ZONGULDAK ERKEK ÖĞRENCİ YURDU", label: "ZONGULDAK ERKEK ÖĞRENCİ YURDU" },
+    ];
     const [user, setUser] = useState({
         ad: '',
         soyad: '',
@@ -33,7 +52,7 @@ const YurtForm = () => {
         dogum_tarihi: '',
         email: '',
         ev_adresi: '',
-        yurt_adi: '',
+        secilen_yurtlar: [],
         askerlik_durumu: '',
         job_id: '',
         cep_telefonu: '',
@@ -185,7 +204,7 @@ const YurtForm = () => {
                 askerlik_durumu: user.askerlik_durumu,
                 dogum_tarihi: user.dogum_tarihi,
                 ev_adresi: user.ev_adresi,
-                yurt_adi: user.yurt_adi,
+                secilen_yurtlar: user.secilen_yurtlar,
                 cep_telefonu: user.cep_telefonu,
                 ikinci_cep_telefonu: user.ikinci_cep_telefonu,
                 job_id: user.job_id
@@ -282,6 +301,7 @@ const YurtForm = () => {
                 ev_adresi: '',
                 cep_telefonu: '',
                 job_id: '',
+                secilen_yurtlar: [],
                 ikinci_cep_telefonu: '',
                 egitim: [{ okul_adi: '', bolum: '', baslangic_tarihi: '', bitis_tarihi: '' }],
                 sertifika: [{ sertifika_adi: '', alindi_tarihi: '' }],
@@ -324,7 +344,7 @@ const YurtForm = () => {
                                     </div>
                                     <div className='ilan-descs-banner'>
                                         <p className='ilanŞirketAdı'>Kurum Adı: <br /> <span>{yurtIlanlar.firma_adi}</span></p>
-                                     
+
                                         <p className='İlanÇalışmaTürü'>Çalışma Türü: <br /> <span>{yurtIlanlar.is_tipi}</span></p>
                                         <p className='İlanTarih'>Son Başvuru: <br /> <span>{new Date(yurtIlanlar.ilan_tarihi).toLocaleDateString()}</span></p>
                                         <p className='İlanNo'>İlan Numarası: <br /><span>{yurtIlanlar.job_id}</span></p>
@@ -340,29 +360,29 @@ const YurtForm = () => {
                 </div>
                 <form onSubmit={handleSubmit}>
                     <div className='formUsersSetion'>
-                            <div className='formPhoto'>
-                                <div className="photo-upload-container">
-                                    <div className="photo-upload-preview">
-                                        {photoPreview ? (
-                                            <img src={photoPreview} alt="Önizleme" className="photo-preview" />
-                                        ) : (
-                                            <div className="photo-placeholder">
-                                                Fotoğraf Yükleyin
-                                            </div>
-                                        )}
-                                    </div>
-                                    <label htmlFor="photo-upload" className="photo-upload-label">
-                                        Fotoğraf Seç
-                                        <input
-                                            id="photo-upload"
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handlePhotoChange}
-                                            className="photo-input"
-                                        />
-                                    </label>
+                        <div className='formPhoto'>
+                            <div className="photo-upload-container">
+                                <div className="photo-upload-preview">
+                                    {photoPreview ? (
+                                        <img src={photoPreview} alt="Önizleme" className="photo-preview" />
+                                    ) : (
+                                        <div className="photo-placeholder">
+                                            Fotoğraf Yükleyin
+                                        </div>
+                                    )}
                                 </div>
+                                <label htmlFor="photo-upload" className="photo-upload-label">
+                                    Fotoğraf Seç
+                                    <input
+                                        id="photo-upload"
+                                        type="file"
+                                        accept="image/*"
+                                        onChange={handlePhotoChange}
+                                        className="photo-input"
+                                    />
+                                </label>
                             </div>
+                        </div>
                         <div className='formUserOneSection'>
                             <div className='formNameSurname'>
                                 <label>Adınızı Giriniz: </label>
@@ -409,36 +429,16 @@ const YurtForm = () => {
                             <input className='formAdress' name="ev_adresi" placeholder="Ev Adresi" value={user.ev_adresi} onChange={handleChange} required />
                         </div>
 
-                        <div className='formCinsiyetDogum'>
-                            <div className='FCD'>
-                                <label>Yurt seçiniz: </label>
-                                <select
-                                    name="yurt_adi"
-                                    placeholder="Yurt Adı"
-                                    value={user.yurt_adi}
-                                    onChange={handleChange} required
-                                >
-                                    <option value="">Yurt Seçiniz</option>
-                                    <option value="ANKARA ERKEK ÖĞRENCİ YURDU">ANKARA ERKEK ÖĞRENCİ YURDU</option>
-                                    <option value="AYDIN ERKEK ÖĞRENCİ YURDU">AYDIN ERKEK ÖĞRENCİ YURDU</option>
-                                    <option value="AYDIN KIZ ÖĞRENCİ YURDU">AYDIN KIZ ÖĞRENCİ YURDU</option>
-                                    <option value="BOLU ERKEK ÖĞRENCİ YURDU">BOLU ERKEK ÖĞRENCİ YURDU</option>
-                                    <option value="BURSA KAMP, EĞİTİM ve KONAKLAMA MERKEZİ">BURSA KAMP, EĞİTİM ve KONAKLAMA MERKEZİ</option>
-                                    <option value="İSTANBUL BAĞCILAR ERKEK ÖĞRENCİ YURDU">İSTANBUL BAĞCILAR ERKEK ÖĞRENCİ YURDU</option>
-                                    <option value="İSTANBUL BEŞİKTAŞ KIZ ÖĞRENCİ PANSİYONU">İSTANBUL BEŞİKTAŞ KIZ ÖĞRENCİ PANSİYONU</option>
-                                    <option value="İSTANBUL BÜYÜKÇEKMECE KAMP, EĞİTİM ve KONAKLAMA MERKEZİ">İSTANBUL BÜYÜKÇEKMECE KAMP, EĞİTİM ve KONAKLAMA MERKEZİ</option>
-                                    <option value="İSTANBUL CEVİZLİBAĞ KIZ ÖĞRENCİ PANSİYONU">İSTANBUL CEVİZLİBAĞ KIZ ÖĞRENCİ PANSİYONU</option>
-                                    <option value="İSTANBUL ÇENGELKÖY KIZ ÖĞRENCİ YURDU">İSTANBUL ÇENGELKÖY KIZ ÖĞRENCİ YURDU</option>
-                                    <option value="İSTANBUL EYÜP ERKEK ÖĞRENCİ YURDU">İSTANBUL EYÜP ERKEK ÖĞRENCİ YURDU</option>
-                                    <option value="İSTANBUL KÜÇÜKÇEKMECE KIZ ÖĞRENCİ YURDU">İSTANBUL KÜÇÜKÇEKMECE KIZ ÖĞRENCİ YURDU</option>
-                                    <option value="İZMİR ERKEK ÖĞRENCİ YURDU">İZMİR ERKEK ÖĞRENCİ YURDU</option>
-                                    <option value="KAYSERİ KIZ ÖĞRENCİ YURDU">KASYERİ KIZ ÖĞRENCİ YURDU</option>
-                                    <option value="KONYA ERKEK ÖĞRENCİ YURDU">KONYA ERKEK ÖĞRENCİ YURDU</option>
-                                    <option value="ŞANLIURFA KIZ ÖĞRENCİ YURDU">ŞANLIURFA KIZ ÖĞRENCİ YURDU</option>
-                                    <option value="YALOVA KIZ ÖĞRENCİ YURDU">YALOVA KIZ ÖĞRENCİ YURDU</option>
-                                    <option value="ZONGULDAK ERKEK ÖĞRENCİ YURDU">ZONGULDAK ERKEK ÖĞRENCİ YURDU</option>
-                                </select>
-                            </div>
+                        <div className='FormAdress'>
+                            <label>Yurt seçiniz: </label>
+                            <MultiSelect
+                                placeholder="Yurt seçiniz"
+                                className='FormYurt'
+                                options={selectData}
+                                value={user.secilen_yurtlar}
+                                onChange={(e) => handleChange({ target: { name: "secilen_yurtlar", value: e } })}
+                                isMulti
+                            />
                         </div>
 
                         <div>

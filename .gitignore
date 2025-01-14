@@ -3,3 +3,4 @@
 # dependencies
 db/
 node_modules
+.env

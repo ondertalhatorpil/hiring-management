@@ -15,7 +15,6 @@ CREATE TABLE users (
     surucu_belgesi VARCHAR(20),
     dogum_tarihi DATE,
     ev_adresi TEXT,
-    yurt_adi TEXT,
     cep_telefonu VARCHAR(20),
     ikinci_cep_telefonu VARCHAR(20),
     job_id INT,

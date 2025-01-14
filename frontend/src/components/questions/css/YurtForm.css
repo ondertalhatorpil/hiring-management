@@ -108,13 +108,32 @@
     flex-direction: column;
 }
 .formAdress{
-    margin-bottom: 30px;
     width: 150%;
 }
 .FormAdress label{
     margin-bottom: 7px;
 }
 
+.FormYurt{
+    padding: 12px 25px; 
+    border-radius: 5px; 
+    border: 1px solid #2f2f2f; 
+    background-color: #f9f9f9; 
+    font-size: 16px; 
+    color: #333; 
+    transition: all 0.3s ease;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.1); 
+    margin-right: 20px;
+    max-width: 100%; /* Maksimum genişliği sınırlıyoruz */
+    width: 500px; /* Varsayılan bir genişlik belirliyoruz */
+}
+
+.FormYurt label{
+    font-weight: 600;
+    font-family: "Outfit", sans-serif;
+    font-size: 18px;
+    color: black;
+}
 
 .formTel{
     display: flex;

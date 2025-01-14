@@ -5,7 +5,7 @@ const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
 
-
+require('dotenv').config();
 const app = express();
 const port = 8082;
 
@@ -49,37 +49,42 @@ app.get('/api/egitim/:user_id', (req, res) => {
 });
 
 app.post('/api/users', (req, res) => {
-    const { 
-        ad, 
+    const {
+        ad,
         soyad,
-        email, 
-        cinsiyet, 
-        mezuniyet, 
+        email,
+        cinsiyet,
+        mezuniyet,
         medeni_durum,
-        askerlik_durumu, 
-        surucu_belgesi, 
-        dogum_tarihi, 
-        ev_adresi, 
-        yurt_adi,
-        cep_telefonu, 
+        askerlik_durumu,
+        surucu_belgesi,
+        dogum_tarihi,
+        ev_adresi,
+        secilen_yurtlar,
+        cep_telefonu,
         ikinci_cep_telefonu,
         job_id
     } = req.body;
+
+    let yurtlar = "";
+    for (const v of secilen_yurtlar) {
+        yurtlar += v.value + ",";
+    }
 
     // job_id kontrolü ekleyelim
     const jobIdValue = job_id ? job_id : null;
 
     db.query(
-        'INSERT INTO users (ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, yurt_adi, cep_telefonu, ikinci_cep_telefonu, job_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
-        [ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, yurt_adi, cep_telefonu, ikinci_cep_telefonu, jobIdValue],
+        'INSERT INTO users (ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, secilen_yurtlar, cep_telefonu, ikinci_cep_telefonu, job_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+        [ad, soyad, email, cinsiyet, mezuniyet, medeni_durum, askerlik_durumu, surucu_belgesi, dogum_tarihi, ev_adresi, yurtlar, cep_telefonu, ikinci_cep_telefonu, jobIdValue],
         (err, results) => {
             if (err) {
                 console.error('Kullanıcı kayıt hatası:', err);
                 return res.status(500).json({ error: err.message });
             }
-            res.status(201).json({ 
+            res.status(201).json({
                 message: 'Kullanıcı başarıyla kaydedildi',
-                user_id: results.insertId 
+                user_id: results.insertId
             });
         }
     );
@@ -447,32 +452,32 @@ app.post('/api/merkez-ilanlar', (req, res) => {
 
 app.post('/api/basvurular', (req, res) => {
     const { userId, ilanId } = req.body;
-    
+
     if (!userId || !ilanId) {
-        return res.status(400).json({ 
-            error: "userId ve ilanId zorunludur" 
+        return res.status(400).json({
+            error: "userId ve ilanId zorunludur"
         });
     }
 
     const basvuru = {
         user_id: userId,
         ilan_id: ilanId,
-        ilan_type: req.body.ilantype == "merkez" ? "merkez": "yurt",
+        ilan_type: req.body.ilantype == "merkez" ? "merkez" : "yurt",
         basvuru_tarihi: new Date()
     };
 
     db.query('INSERT INTO basvurular SET ?', basvuru, (err, result) => {
         if (err) {
             console.error('Başvuru kayıt hatası:', err);
-            return res.status(500).json({ 
-                error: err.message 
+            return res.status(500).json({
+                error: err.message
             });
         }
-        
-        res.status(201).json({ 
-            id: result.insertId, 
+
+        res.status(201).json({
+            id: result.insertId,
             message: 'Başvuru başarıyla kaydedildi',
-            ...basvuru 
+            ...basvuru
         });
     });
 });
@@ -494,7 +499,7 @@ app.get('/api/basvurular/:ilan_id', async (req, res) => {
         const userIds = basvurular.map(basvuru => basvuru.user_id);
 
         // Tüm tablolardan verileri paralel olarak al
-        const [users, egitimler, ilgiAlanlari, sertifikalar, yabanciDiller, referanslar, isDeneyimleri] = 
+        const [users, egitimler, ilgiAlanlari, sertifikalar, yabanciDiller, referanslar, isDeneyimleri] =
             await Promise.all([
                 db.promise().query('SELECT * FROM users WHERE user_id IN (?)', [userIds]),
                 db.promise().query('SELECT * FROM egitim WHERE user_id IN (?)', [userIds]),
@@ -522,9 +527,9 @@ app.get('/api/basvurular/:ilan_id', async (req, res) => {
 
     } catch (error) {
         console.error('Veri çekme hatası:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: 'Veritabanı hatası',
-            details: error.message 
+            details: error.message
         });
     }
 });
@@ -571,7 +576,7 @@ app.get('/api/tum-basvurular/yurt', async (req, res) => {
                 db.promise().query('SELECT * FROM is_deneyimi WHERE user_id IN (?)', [userIds]),
                 db.promise().query('SELECT * FROM user_photos WHERE user_id IN (?)', [userIds]) // Yeni eklenen
             ]);
-    
+
 
             const detayliBasvuranlar = users[0].map(user => ({
                 ...user,
@@ -712,40 +717,40 @@ app.get('/api/merkez-ilanlar', (req, res) => {
 // Yurt ilanını arşive taşıma endpoint'i
 app.post('/api/arsiv/yurt-ilan/:id', async (req, res) => {
     const ilanId = req.params.id;
-    
+
     try {
         // İlanı getir
         const [ilan] = await db.promise().query(
-            'SELECT * FROM yurt_ilanlar WHERE id = ?', 
+            'SELECT * FROM yurt_ilanlar WHERE id = ?',
             [ilanId]
         );
-        
+
         if (!ilan || ilan.length === 0) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 message: 'İlan bulunamadı',
-                error: true 
+                error: true
             });
         }
 
         // İlanı arşive ekle
         await db.promise().query(
-            'INSERT INTO arsiv_yurt_ilanlar SET ?', 
-            {...ilan[0], arsiv_tarihi: new Date()}
+            'INSERT INTO arsiv_yurt_ilanlar SET ?',
+            { ...ilan[0], arsiv_tarihi: new Date() }
         );
-        
+
         // Orijinal ilanı sil
         await db.promise().query(
-            'DELETE FROM yurt_ilanlar WHERE id = ?', 
+            'DELETE FROM yurt_ilanlar WHERE id = ?',
             [ilanId]
         );
-        
-        res.json({ 
+
+        res.json({
             message: 'İlan başarıyla arşivlendi',
             success: true
         });
     } catch (error) {
         console.error('Arşivleme hatası:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: error.message,
             message: 'İlan arşivlenirken bir hata oluştu'
         });
@@ -755,40 +760,40 @@ app.post('/api/arsiv/yurt-ilan/:id', async (req, res) => {
 
 app.post('/api/arsiv/merkez-ilan/:id', async (req, res) => {
     const ilanId = req.params.id;
-    
+
     try {
         // İlanı getir
         const [ilan] = await db.promise().query(
-            'SELECT * FROM merkez_ilanlar WHERE id = ?', 
+            'SELECT * FROM merkez_ilanlar WHERE id = ?',
             [ilanId]
         );
-        
+
         if (!ilan || ilan.length === 0) {
-            return res.status(404).json({ 
+            return res.status(404).json({
                 message: 'İlan bulunamadı',
-                error: true 
+                error: true
             });
         }
 
         // İlanı arşive ekle
         await db.promise().query(
-            'INSERT INTO arsiv_merkez_ilanlar SET ?', 
-            {...ilan[0], arsiv_tarihi: new Date()}
+            'INSERT INTO arsiv_merkez_ilanlar SET ?',
+            { ...ilan[0], arsiv_tarihi: new Date() }
         );
-        
+
         // Orijinal ilanı sil
         await db.promise().query(
-            'DELETE FROM merkez_ilanlar WHERE id = ?', 
+            'DELETE FROM merkez_ilanlar WHERE id = ?',
             [ilanId]
         );
-        
-        res.json({ 
+
+        res.json({
             message: 'İlan başarıyla arşivlendi',
             success: true
         });
     } catch (error) {
         console.error('Arşivleme hatası:', error);
-        res.status(500).json({ 
+        res.status(500).json({
             error: error.message,
             message: 'İlan arşivlenirken bir hata oluştu'
         });
@@ -869,28 +874,28 @@ app.get('/api/cv/:userId', async (req, res) => {
 
 app.get('/api/download-cv/:id', async (req, res) => {
     try {
-      const cvId = req.params.id;
-      const [cvRows] = await db.promise().query('SELECT * FROM cv WHERE id = ?', [cvId]);
-      
-      if (cvRows.length === 0) {
-        return res.status(404).send('CV bulunamadı');
-      }
-  
-      const cv = cvRows[0];
-      const filePath = cv.file_path;
-  
-      if (!fs.existsSync(filePath)) {
-        return res.status(404).send('Dosya bulunamadı');
-      }
-  
-      res.download(filePath, cv.original_filename || 'cv.pdf');
-    } catch (error) {
-      console.error('CV indirme hatası:', error);
-      res.status(500).send('CV indirilirken bir hata oluştu');
-    }
-  });
+        const cvId = req.params.id;
+        const [cvRows] = await db.promise().query('SELECT * FROM cv WHERE id = ?', [cvId]);
 
-  app.get('/api/tum-basvurular/merkez', async (req, res) => {
+        if (cvRows.length === 0) {
+            return res.status(404).send('CV bulunamadı');
+        }
+
+        const cv = cvRows[0];
+        const filePath = cv.file_path;
+
+        if (!fs.existsSync(filePath)) {
+            return res.status(404).send('Dosya bulunamadı');
+        }
+
+        res.download(filePath, cv.original_filename || 'cv.pdf');
+    } catch (error) {
+        console.error('CV indirme hatası:', error);
+        res.status(500).send('CV indirilirken bir hata oluştu');
+    }
+});
+
+app.get('/api/tum-basvurular/merkez', async (req, res) => {
     try {
         // Önce tüm merkez ilanlarını al
         const [ilanlar] = await db.promise().query('SELECT * FROM merkez_ilanlar');
@@ -1023,15 +1028,15 @@ app.post('/api/upload-photo', photoUpload.single('photo'), async (req, res) => {
         const [result] = await db.promise().query(query, [userId, req.file.path]);
         console.log('Sorgu sonucu:', result);
 
-        res.status(201).json({ 
-            message: 'Fotoğraf başarıyla yüklendi', 
-            filePath: req.file.path 
+        res.status(201).json({
+            message: 'Fotoğraf başarıyla yüklendi',
+            filePath: req.file.path
         });
     } catch (error) {
         console.error('Fotoğraf yükleme hatası:', error);
-        res.status(500).json({ 
-            error: 'Fotoğraf yüklenirken bir hata oluştu', 
-            details: error.message 
+        res.status(500).json({
+            error: 'Fotoğraf yüklenirken bir hata oluştu',
+            details: error.message
         });
     }
 });
@@ -1042,10 +1047,10 @@ app.get('/api/photo/:userId', async (req, res) => {
 
     try {
         const [photos] = await db.promise().query(
-            'SELECT * FROM user_photos WHERE user_id = ? ORDER BY id DESC LIMIT 1', 
+            'SELECT * FROM user_photos WHERE user_id = ? ORDER BY id DESC LIMIT 1',
             [userId]
         );
-        
+
         if (photos.length === 0) {
             return res.status(404).json({ message: 'Fotoğraf bulunamadı' });
         }
@@ -1058,9 +1063,9 @@ app.get('/api/photo/:userId', async (req, res) => {
         res.sendFile(photo.file_path);
     } catch (error) {
         console.error('Fotoğraf getirme hatası:', error);
-        res.status(500).json({ 
-            error: 'Fotoğraf getirilirken bir hata oluştu', 
-            details: error.message 
+        res.status(500).json({
+            error: 'Fotoğraf getirilirken bir hata oluştu',
+            details: error.message
         });
     }
 });
@@ -1072,7 +1077,7 @@ app.delete('/api/photo/:photoId', async (req, res) => {
     try {
         // Önce fotoğraf bilgilerini al
         const [photos] = await db.promise().query(
-            'SELECT * FROM user_photos WHERE id = ?', 
+            'SELECT * FROM user_photos WHERE id = ?',
             [photoId]
         );
 
@@ -1092,9 +1097,9 @@ app.delete('/api/photo/:photoId', async (req, res) => {
         res.json({ message: 'Fotoğraf başarıyla silindi' });
     } catch (error) {
         console.error('Fotoğraf silme hatası:', error);
-        res.status(500).json({ 
-            error: 'Fotoğraf silinirken bir hata oluştu', 
-            details: error.message 
+        res.status(500).json({
+            error: 'Fotoğraf silinirken bir hata oluştu',
+            details: error.message
         });
     }
 });
@@ -1115,17 +1120,17 @@ app.get('/api/dashboard/stats', async (req, res) => {
                     (SELECT COUNT(*) FROM merkez_ilanlar) as merkez_count,
                     (SELECT COUNT(*) FROM yurt_ilanlar) as yurt_count
             `),
-            
+
             // Arşivlenmiş iş ilanları sayısı
             db.promise().query(`
                 SELECT 
                     (SELECT COUNT(*) FROM arsiv_merkez_ilanlar) as merkez_archived,
                     (SELECT COUNT(*) FROM arsiv_yurt_ilanlar) as yurt_archived
             `),
-            
+
             // Toplam başvuran sayısı
             db.promise().query('SELECT COUNT(DISTINCT user_id) as total FROM basvurular'),
-            
+
             // Son 5 başvuru
             db.promise().query(`
                 SELECT u.ad, u.soyad, u.email, b.basvuru_tarihi,
@@ -1140,7 +1145,7 @@ app.get('/api/dashboard/stats', async (req, res) => {
                 ORDER BY b.basvuru_tarihi DESC
                 LIMIT 5
             `),
-            
+
             // İlanlara göre başvuru dağılımı
             db.promise().query(`
                 SELECT 
@@ -1189,85 +1194,85 @@ app.get('/api/dashboard/stats', async (req, res) => {
 
 app.get('/api/sliders', async (req, res) => {
     try {
-      const [rows] = await db.promise().query(
-        'SELECT id, image_url, title, link_url FROM sliders WHERE is_active = 1 ORDER BY sort_order'
-      );
-      
-      if (rows.length === 0) {
-        return res.status(404).json({ message: 'Slider bulunamadı' });
-      }
-  
-      res.json(rows);
+        const [rows] = await db.promise().query(
+            'SELECT id, image_url, title, link_url FROM sliders WHERE is_active = 1 ORDER BY sort_order'
+        );
+
+        if (rows.length === 0) {
+            return res.status(404).json({ message: 'Slider bulunamadı' });
+        }
+
+        res.json(rows);
     } catch (error) {
-      console.error('Slider getirme hatası:', error);
-      res.status(500).json({ error: 'Sliderlar getirilirken bir hata oluştu' });
+        console.error('Slider getirme hatası:', error);
+        res.status(500).json({ error: 'Sliderlar getirilirken bir hata oluştu' });
     }
-  });
+});
 
 
-  // Yeni slider ekle
+// Yeni slider ekle
 app.post('/api/sliders', (req, res) => {
     const { title, image_url, link_url } = req.body;
-  
+
     // Validasyon
     if (!title || !image_url) {
-      return res.status(400).json({ error: 'Başlık ve resim URL\'si gereklidir' });
+        return res.status(400).json({ error: 'Başlık ve resim URL\'si gereklidir' });
     }
-  
+
     // Sort order için maksimum değeri al
     db.query('SELECT COALESCE(MAX(sort_order), 0) as maxOrder FROM sliders', (error, results) => {
-      if (error) {
-        console.error('Sort order hatası:', error);
-        return res.status(500).json({ error: 'Slider eklenirken bir hata oluştu' });
-      }
-  
-      const nextSortOrder = results[0].maxOrder + 1;
-  
-      // Yeni slider'ı ekle
-      const query = `
+        if (error) {
+            console.error('Sort order hatası:', error);
+            return res.status(500).json({ error: 'Slider eklenirken bir hata oluştu' });
+        }
+
+        const nextSortOrder = results[0].maxOrder + 1;
+
+        // Yeni slider'ı ekle
+        const query = `
         INSERT INTO sliders 
         (title, image_url, link_url, is_active, sort_order) 
         VALUES (?, ?, ?, 1, ?)
       `;
-  
-      db.query(
-        query,
-        [title, image_url, link_url, nextSortOrder],
-        (error, results) => {
-          if (error) {
-            console.error('Slider ekleme hatası:', error);
-            return res.status(500).json({ error: 'Slider eklenirken bir hata oluştu' });
-          }
-  
-          res.status(201).json({
-            message: 'Slider başarıyla eklendi',
-            id: results.insertId
-          });
-        }
-      );
+
+        db.query(
+            query,
+            [title, image_url, link_url, nextSortOrder],
+            (error, results) => {
+                if (error) {
+                    console.error('Slider ekleme hatası:', error);
+                    return res.status(500).json({ error: 'Slider eklenirken bir hata oluştu' });
+                }
+
+                res.status(201).json({
+                    message: 'Slider başarıyla eklendi',
+                    id: results.insertId
+                });
+            }
+        );
     });
-  });
-  
-  // Slider sil
-  app.delete('/api/sliders/:id', (req, res) => {
+});
+
+// Slider sil
+app.delete('/api/sliders/:id', (req, res) => {
     const sliderId = req.params.id;
-  
+
     const query = 'DELETE FROM sliders WHERE id = ?';
-    
+
     db.query(query, [sliderId], (error, results) => {
-      if (error) {
-        console.error('Slider silme hatası:', error);
-        return res.status(500).json({ error: 'Slider silinirken bir hata oluştu' });
-      }
-  
-      if (results.affectedRows === 0) {
-        return res.status(404).json({ error: 'Slider bulunamadı' });
-      }
-  
-      res.json({ message: 'Slider başarıyla silindi' });
+        if (error) {
+            console.error('Slider silme hatası:', error);
+            return res.status(500).json({ error: 'Slider silinirken bir hata oluştu' });
+        }
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ error: 'Slider bulunamadı' });
+        }
+
+        res.json({ message: 'Slider başarıyla silindi' });
     });
-  });
-  
+});
+
 // Uygulamayı başlat
 app.listen(port, () => {
     console.log(`Sunucu http://localhost:${port} adresinde çalışıyor.`);
