@@ -48,6 +48,7 @@ app.get('/api/egitim/:user_id', (req, res) => {
     });
 });
 
+
 app.post('/api/users', (req, res) => {
     const {
         ad,
@@ -66,12 +67,18 @@ app.post('/api/users', (req, res) => {
         job_id
     } = req.body;
 
+    console.log("Gelen secilen_yurtlar:", secilen_yurtlar); // İlk veriyi kontrol edelim
+
     // secilen_yurtlar array'ini string'e çevirme
     let yurtlar = "";
     if (Array.isArray(secilen_yurtlar) && secilen_yurtlar.length > 0) {
-        // Her bir yurt objesinin value değerini alıp birleştiriyoruz
         yurtlar = secilen_yurtlar.map(yurt => yurt.value).join(',');
+        console.log("Oluşturulan yurtlar string'i:", yurtlar); // String'e çevrilmiş hali
+    } else {
+        console.log("secilen_yurtlar array değil veya boş");
     }
+
+    console.log("Veritabanına gönderilecek yurtlar değeri:", yurtlar); // Son halini kontrol edelim
 
     // job_id kontrolü
     const jobIdValue = job_id ? job_id : null;
@@ -84,6 +91,20 @@ app.post('/api/users', (req, res) => {
                 console.error('Kullanıcı kayıt hatası:', err);
                 return res.status(500).json({ error: err.message });
             }
+
+            // Kayıt sonrası kontrol için veriyi hemen çekelim
+            db.query(
+                'SELECT secilen_yurtlar FROM users WHERE user_id = ?',
+                [results.insertId],
+                (err, checkResults) => {
+                    if (err) {
+                        console.error('Kontrol sorgusu hatası:', err);
+                    } else {
+                        console.log('Kaydedilen veri:', checkResults[0]);
+                    }
+                }
+            );
+
             res.status(201).json({
                 message: 'Kullanıcı başarıyla kaydedildi',
                 user_id: results.insertId
