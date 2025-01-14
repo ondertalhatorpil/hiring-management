@@ -429,6 +429,7 @@ const YurtForm = () => {
                             <input className='formAdress' name="ev_adresi" placeholder="Ev Adresi" value={user.ev_adresi} onChange={handleChange} required />
                         </div>
 
+                         {/* 
                         <div className='FormAdress'>
                             <label>Yurt seçiniz: </label>
                             <MultiSelect
@@ -440,8 +441,8 @@ const YurtForm = () => {
                                 isMulti
                             />
                         </div>  
-
-                        {/*            
+                        */}   
+                                  
                         <div>
                             <div className='formTel'>
                                 <div className='FTForm'>
@@ -454,7 +455,7 @@ const YurtForm = () => {
                                 </div>
                             </div>
                         </div>
-                        */}
+                        
 
                         <div className='MMASForm'>
                             <div className='MMForm'>
