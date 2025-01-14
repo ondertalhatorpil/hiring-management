@@ -66,12 +66,14 @@ app.post('/api/users', (req, res) => {
         job_id
     } = req.body;
 
+    // secilen_yurtlar array'ini string'e çevirme
     let yurtlar = "";
-    for (const v of secilen_yurtlar) {
-        yurtlar += v.value + ",";
+    if (Array.isArray(secilen_yurtlar) && secilen_yurtlar.length > 0) {
+        // Her bir yurt objesinin value değerini alıp birleştiriyoruz
+        yurtlar = secilen_yurtlar.map(yurt => yurt.value).join(',');
     }
 
-    // job_id kontrolü ekleyelim
+    // job_id kontrolü
     const jobIdValue = job_id ? job_id : null;
 
     db.query(
@@ -537,12 +539,9 @@ app.get('/api/basvurular/:ilan_id', async (req, res) => {
 
 app.get('/api/tum-basvurular/yurt', async (req, res) => {
     try {
-        // Önce tüm yurt ilanlarını al
         const [ilanlar] = await db.promise().query('SELECT * FROM yurt_ilanlar');
 
-        // Her ilan için başvuruları ve detayları al
         const detayliIlanlar = await Promise.all(ilanlar.map(async (ilan) => {
-            // İlana ait başvuruları bul
             const [basvurular] = await db.promise().query(
                 'SELECT user_id FROM basvurular WHERE ilan_id = ? AND ilan_type="yurt"',
                 [ilan.id]
@@ -556,7 +555,6 @@ app.get('/api/tum-basvurular/yurt', async (req, res) => {
             }
 
             const userIds = basvurular.map(basvuru => basvuru.user_id);
-
             const [
                 users,
                 egitimler,
@@ -565,7 +563,9 @@ app.get('/api/tum-basvurular/yurt', async (req, res) => {
                 yabanciDiller,
                 referanslar,
                 isDeneyimleri,
-                photos // Yeni eklenen
+                photos,
+                // Seçilen yurtları ekledik
+                secilenYurtlar
             ] = await Promise.all([
                 db.promise().query('SELECT * FROM users WHERE user_id IN (?)', [userIds]),
                 db.promise().query('SELECT * FROM egitim WHERE user_id IN (?)', [userIds]),
@@ -574,21 +574,28 @@ app.get('/api/tum-basvurular/yurt', async (req, res) => {
                 db.promise().query('SELECT * FROM yabanci_dil WHERE user_id IN (?)', [userIds]),
                 db.promise().query('SELECT * FROM referanslar WHERE user_id IN (?)', [userIds]),
                 db.promise().query('SELECT * FROM is_deneyimi WHERE user_id IN (?)', [userIds]),
-                db.promise().query('SELECT * FROM user_photos WHERE user_id IN (?)', [userIds]) // Yeni eklenen
+                db.promise().query('SELECT * FROM user_photos WHERE user_id IN (?)', [userIds]),
+                // Seçilen yurtları çekiyoruz
+                db.promise().query('SELECT user_id, secilen_yurtlar FROM users WHERE user_id IN (?)', [userIds])
             ]);
 
-
-            const detayliBasvuranlar = users[0].map(user => ({
-                ...user,
-                egitim_bilgileri: egitimler[0].filter(egitim => egitim.user_id === user.user_id),
-                ilgi_alanlari: ilgiAlanlari[0].filter(ilgi => ilgi.user_id === user.user_id),
-                sertifikalar: sertifikalar[0].filter(sertifika => sertifika.user_id === user.user_id),
-                yabanci_diller: yabanciDiller[0].filter(dil => dil.user_id === user.user_id),
-                referanslar: referanslar[0].filter(referans => referans.user_id === user.user_id),
-                is_deneyimleri: isDeneyimleri[0].filter(deneyim => deneyim.user_id === user.user_id),
-                photo: photos[0].find(photo => photo.user_id === user.user_id) || null // Yeni eklenen
-            }));
-
+            const detayliBasvuranlar = users[0].map(user => {
+                // Kullanıcının seçtiği yurtları bulalım
+                const userYurtlar = secilenYurtlar[0].find(y => y.user_id === user.user_id);
+                
+                return {
+                    ...user,
+                    egitim_bilgileri: egitimler[0].filter(egitim => egitim.user_id === user.user_id),
+                    ilgi_alanlari: ilgiAlanlari[0].filter(ilgi => ilgi.user_id === user.user_id),
+                    sertifikalar: sertifikalar[0].filter(sertifika => sertifika.user_id === user.user_id),
+                    yabanci_diller: yabanciDiller[0].filter(dil => dil.user_id === user.user_id),
+                    referanslar: referanslar[0].filter(referans => referans.user_id === user.user_id),
+                    is_deneyimleri: isDeneyimleri[0].filter(deneyim => deneyim.user_id === user.user_id),
+                    photo: photos[0].find(photo => photo.user_id === user.user_id) || null,
+                    // Seçilen yurtları ekliyoruz
+                    secilen_yurtlar: userYurtlar ? userYurtlar.secilen_yurtlar : null
+                };
+            });
 
             return {
                 ilan_detay: ilan,
@@ -601,7 +608,6 @@ app.get('/api/tum-basvurular/yurt', async (req, res) => {
             toplam_ilan_sayisi: ilanlar.length,
             ilanlar: detayliIlanlar
         });
-
     } catch (error) {
         console.error('Veri çekme hatası:', error);
         res.status(500).json({
