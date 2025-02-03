@@ -40,7 +40,6 @@ const KVKK = () => {
                         <li>Eğitim Bilgileri (Okul, bölüm, mezuniyet durumu vb.)</li>
                         <li>Mesleki Deneyim (İş geçmişi, pozisyon, referanslar vb.)</li>
                         <li>Görsel ve İşitsel Kayıtlar</li>
-                        <li>Çerezler (cookies) vasıtasıyla toplanmaktadır.</li>
                     </ul>
                    </span>
                 </div>
