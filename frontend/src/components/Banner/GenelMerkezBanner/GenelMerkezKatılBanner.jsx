@@ -10,7 +10,7 @@ const GenelMerkezKatılBanner = () => {
   return (
     <div className='G-M-Container'>
         <div className='G-M-Desc'>
-            <h1>Önder'de Çalışmaya Ne Dersin?</h1>
+            <h1>ÖNDER'de Çalışmaya Ne Dersin?</h1>
             <p>Kariyer yolculuğunuzu desteklemek amacıyla, en güncel iş ilanlarını ve kariyer fırsatlarını sizlere sunan bir platformuz.
             </p>
             <Link className='GM-Desc-B' to="/hakkımızda">

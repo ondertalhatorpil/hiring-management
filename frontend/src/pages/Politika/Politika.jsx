@@ -14,7 +14,7 @@ const Politika = () => {
                     <p>-İnsana Değer Veren, Gelişime Açık Bir Kariyer Anlayışı-</p>
                 </div>
                 <div className='aboutText'>
-                  <p>“ÖNDER İmam Hatipliler Derneği olarak geliştirdiğimiz Kariyer Platformu, derneğimiz bünyesindeki iş ilanlarını paylaşmaktadır. Hem iş hayatında tecrübe sahibi profesyonellere hem de henüz yolun başında olan gençlere kapılarını açarak ortak hedefler doğrultusunda yapılacak çalışmalarla ÖNDER markasının güçlenmesini hedeflemektedir."</p>
+                  <p>“<b>ÖNDER İmam Hatipliler Derneği olarak geliştirdiğimiz Kariyer Platformu</b>, derneğimiz bünyesindeki iş ilanlarını paylaşmaktadır. Hem iş hayatında <b>tecrübe sahibi</b> profesyonellere hem de henüz yolun başında olan <b>gençlere</b> kapılarını açarak ortak hedefler doğrultusunda yapılacak çalışmalarla ÖNDER markasının güçlenmesini hedeflemektedir."</p>
                   <h4>BU ÇERÇEVEDE ÖNDER İMAM HATİPLİLER DERNEĞİ İNSAN KAYNAKLARI POLİTİKASININ TEMEL İLKELERİ ŞUNLARDIR;</h4>
                   <ul>
                     <li>• Derneğimizin misyon ve vizyonu ile uyumlu olarak tecrübe ve mesleki yetkinliğe sahip kişileri istihdam etmek.</li>

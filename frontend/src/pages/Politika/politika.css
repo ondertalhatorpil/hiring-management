@@ -5,7 +5,6 @@
     justify-content: center;
     flex-direction: column;
 }
-@import url('https://fonts.googleapis.com/css2?family=Lobster&family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
 .aboutText{
     width: 100%;
     display: flex;
@@ -20,7 +19,6 @@
     width: 50%;
     font-size: 28px;
     text-align: center;
-    font-family: "Lobster", sans-serif;
 }
 .aboutText h4{
     font-weight: 800;
@@ -51,9 +49,4 @@
     width: 80%;
     font-size: 13px;
    }
-}
-
-
-@media screen and (max-width: 992px) {
-  
 }
