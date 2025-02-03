@@ -23,7 +23,7 @@ const About = () => {
                     </div>
                     <div className='aboutSection2'>
                             <h2>Kimler Başvurabilir?</h2>
-                            <p>Platformumuzdaki ilanlara herkes başvurabilir. İmam Hatip mezunu veya üyesi olma şartı olmaksızın, ilanlara erişim sağlayarak özgeçmiş oluşturabilir ve uygun pozisyonlara başvuruda bulunabilirsiniz.</p>
+                            <p>Platformumuzdaki ilanlara herkes başvurabilir. İmam hatip mezunu veya dernek üyesi olma şartı olmaksızın, ilanlara erişim sağlayarak özgeçmiş oluşturabilir ve uygun pozisyonlara başvuruda bulunabilirsiniz.</p>
                     </div>
                     <div className='aboutSection1'>
                             <h2>Hedefimiz Nedir?</h2>

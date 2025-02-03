@@ -8,7 +8,7 @@ const Footer = () => {
         <Link to='/kvkk'>
         KVKK Sözleşmesi
         </Link>
-        <p>2024 © Önder Kariyer. Tüm Hakları Saklıdır</p>
+        <p>2024 © ÖNDER Kariyer. Tüm Hakları Saklıdır</p>
         <p>insankaynaklari@onder.org.tr</p>
         </div>
     </div>
