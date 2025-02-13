@@ -16,7 +16,7 @@ const MerkezForm = () => {
 
     const { id } = useParams();
     const navigate = useNavigate(); // useHistory yerine useNavigate kullanıyoruz
-
+    const [photoError, setPhotoError] = useState('');
     const [merkezIlanlar, setMerkezIlanlar] = useState(null); // null ile başlatın
     const [loading, setLoading] = useState(true); // loading state ekleyin
     const [error] = useState(null);
@@ -51,29 +51,33 @@ const MerkezForm = () => {
 
     const [photoPreview, setPhotoPreview] = useState(null);
 
-    // Fotoğraf değişikliği için handler
     const handlePhotoChange = (e) => {
         const file = e.target.files[0];
         if (file) {
             // Dosya boyutu kontrolü (5MB)
             if (file.size > 5 * 1024 * 1024) {
-                alert('Dosya boyutu 5MB\'dan küçük olmalıdır');
+                setPhotoError('Dosya boyutu 5MB\'dan küçük olmalıdır');
+                setPhotoPreview(null);
+                setUser({ ...user, photo: null });
                 return;
             }
-
+    
             // Dosya tipi kontrolü
             if (!file.type.startsWith('image/')) {
-                alert('Lütfen geçerli bir resim dosyası seçin');
+                setPhotoError('Lütfen geçerli bir resim dosyası seçin');
+                setPhotoPreview(null);
+                setUser({ ...user, photo: null });
                 return;
             }
-
+    
+            setPhotoError('');
             // Önizleme oluştur
             const reader = new FileReader();
             reader.onload = () => {
                 setPhotoPreview(reader.result);
             };
             reader.readAsDataURL(file);
-
+    
             setUser({ ...user, photo: file });
         }
     };
@@ -165,6 +169,11 @@ const MerkezForm = () => {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+
+        if (!user.photo) {
+            setPhotoError('Lütfen bir fotoğraf seçin');
+            return;
+        }
 
         if (!kvkkConsent) {
             alert('Lütfen KVKK metnini onaylayınız.');
@@ -335,28 +344,30 @@ const MerkezForm = () => {
                 <form onSubmit={handleSubmit}>
                     <div className='formUsersSetion'>
                     <div className='formPhoto'>
-                                <div className="photo-upload-container">
-                                    <div className="photo-upload-preview">
-                                        {photoPreview ? (
-                                            <img src={photoPreview} alt="Önizleme" className="photo-preview" />
-                                        ) : (
-                                            <div className="photo-placeholder">
-                                                Fotoğraf Yükleyin
-                                            </div>
-                                        )}
-                                    </div>
-                                    <label htmlFor="photo-upload" className="photo-upload-label">
-                                        Fotoğraf Seç
-                                        <input
-                                            id="photo-upload"
-                                            type="file"
-                                            accept="image/*"
-                                            onChange={handlePhotoChange}
-                                            className="photo-input"
-                                            required
-                                        />
-                                    </label>
-                                </div>
+                    <div className="photo-upload-container">
+    <div className="photo-upload-preview">
+        {photoPreview ? (
+            <img src={photoPreview} alt="Önizleme" className="photo-preview" />
+        ) : (
+            <div className="photo-placeholder">
+                Fotoğraf Yükleyin*
+            </div>
+        )}
+    </div>
+    <label htmlFor="photo-upload" className="photo-upload-label">
+        Fotoğraf Seç
+        <input
+            id="photo-upload"
+            type="file"
+            accept="image/*"
+            onChange={handlePhotoChange}
+            className="photo-input"
+        />
+    </label>
+    {photoError && (
+        <div className="text-red-500 mt-2 text-sm">{photoError}</div>
+    )}
+</div>
                             </div>
                         <div className='formUserOneSection'>
                             <div className='formNameSurname'>
