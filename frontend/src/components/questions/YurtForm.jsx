@@ -379,6 +379,7 @@ const YurtForm = () => {
                                         accept="image/*"
                                         onChange={handlePhotoChange}
                                         className="photo-input"
+                                        required
                                     />
                                 </label>
                             </div>

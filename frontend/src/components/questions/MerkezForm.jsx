@@ -353,6 +353,7 @@ const MerkezForm = () => {
                                             accept="image/*"
                                             onChange={handlePhotoChange}
                                             className="photo-input"
+                                            required
                                         />
                                     </label>
                                 </div>
