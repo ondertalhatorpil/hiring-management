@@ -172,6 +172,7 @@ const MerkezForm = () => {
 
         if (!user.photo) {
             setPhotoError('Lütfen bir fotoğraf seçin');
+            alert('Lütfen bir fotoğraf yükleyin');
             return;
         }
 
@@ -368,6 +369,7 @@ const MerkezForm = () => {
         <div className="text-red-500 mt-2 text-sm">{photoError}</div>
     )}
 </div>
+
                             </div>
                         <div className='formUserOneSection'>
                             <div className='formNameSurname'>

@@ -196,6 +196,7 @@ const YurtForm = () => {
 
         if (!user.photo) {
             setPhotoError('Lütfen bir fotoğraf seçin');
+            alert('Lütfen bir fotoğraf yükleyin');
             return;
         }
 
